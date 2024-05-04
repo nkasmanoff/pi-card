@@ -4,3 +4,11 @@
 **__pycache__
 **.DS_Store
 images/
+**.ipynb_checkpoints/
+
+**env_picard
+
+**command.wav
+**wakeword_temp.wav
+**wake.wav
+**audio.wav

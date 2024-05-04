@@ -1,9 +1,9 @@
 import speech_recognition as sr
 import librosa
 import os
-from actions import get_llm_response, message_history
-from generate_gguf import generate_gguf_stream
-from transcribe_gguf import transcribe_gguf
+from assistanttools.actions import get_llm_response, message_history
+from assistanttools.generate_gguf import generate_gguf_stream
+from assistanttools.transcribe_gguf import transcribe_gguf
 import soundfile as sf
 import re
 
