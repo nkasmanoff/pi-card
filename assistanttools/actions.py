@@ -1,5 +1,8 @@
 import ollama
 import os
+import requests
+from dotenv import load_dotenv
+load_dotenv()
 
 message_history = [{
     'role': 'system',
@@ -7,11 +10,18 @@ message_history = [{
 }]
 
 
-def get_llm_response(transcription, message_history, streaming=True, model_name='phi3:instruct', max_spoken_tokens=300):
-    message_history.append({
-        'role': 'user',
-        'content': transcription,
-    })
+def get_llm_response(transcription, message_history, streaming=True, model_name='phi3:instruct', max_spoken_tokens=300, use_rag=True):
+    if use_rag:
+        # Experimental idea for supplmenting with external data. Tool use may be better but this could start.
+        if 'weather' in transcription:
+            print("using tool")
+            message_history = add_in_weather_data(
+                message_history, transcription)
+        else:
+            message_history.append({
+                'role': 'user',
+                'content': transcription,
+            })
     print("Now asking llm...")
     if streaming:
 
@@ -22,6 +32,7 @@ def get_llm_response(transcription, message_history, streaming=True, model_name=
         streaming_word = ""
         for i, chunk in enumerate(stream):
             text_chunk = chunk['message']['content']
+            print(text_chunk)
             streaming_word += text_chunk
 
             response += text_chunk
@@ -34,6 +45,8 @@ def get_llm_response(transcription, message_history, streaming=True, model_name=
 
                 os.system(f"espeak '{streaming_word_clean}'")
                 streaming_word = ""
+
+        os.system(f"espeak '{streaming_word}'")
 
     else:
 
@@ -61,3 +74,34 @@ def check_if_word(text_chunk):
     if ' ' in text_chunk:
         return text_chunk
     return ""
+
+
+def add_in_weather_data(message_history, transcription):
+    """
+    Add in weather data to the message history.
+    """
+
+    api_key = os.getenv("TOMORROWIO_API_KEY")
+    headers = {"accept": "application/json"}
+
+    rt_url = f"https://api.tomorrow.io/v4/weather/realtime?location=new%20york&apikey={api_key}"
+    rt_response = requests.get(rt_url, headers=headers)
+
+    forecast_url = f"https://api.tomorrow.io/v4/weather/forecast?location=new%20york&apikey={api_key}"
+    forecast_response = requests.get(forecast_url, headers=headers)
+
+    message_history.append({
+        'role': 'user',
+        'content': f"""Here is the current weather data. Use this to answer my questions: 
+        
+        Realtime:
+        {rt_response.text}
+
+        Forecast:
+        {forecast_response.text}
+
+        Question:
+        {transcription}
+        """,
+    })
+    return message_history

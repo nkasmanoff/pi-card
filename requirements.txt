@@ -3,3 +3,4 @@ SpeechRecognition
 librosa
 soundfile
 pyaudio
+python-dotenv

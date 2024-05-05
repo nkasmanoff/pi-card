@@ -13,7 +13,7 @@ Pi-card is an AI powered voice assistant running entirely on a Raspberry Pi. It 
 In addition, if there is a camera equipped, you can also ask Pi-card to take a photo, describe what it sees, and then ask questions about that image. 
 
 ### Why Pi-card?
-Raspberry **Pi** - **C**omputer **A**udio **R**ecognition **D**evice. 
+Raspberry **Pi** - **C**amera **A**udio **R**ecognition **D**evice. 
 
 <img src="assets/picard-facepalm.jpg" height="300">
 
