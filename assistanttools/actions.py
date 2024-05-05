@@ -14,9 +14,11 @@ def get_llm_response(transcription, message_history, streaming=True, model_name=
     if use_rag:
         # Experimental idea for supplmenting with external data. Tool use may be better but this could start.
         if 'weather' in transcription:
-            print("using tool")
             message_history = add_in_weather_data(
                 message_history, transcription)
+        elif "news" in transcription:
+            message_history = add_in_news_data(message_history, transcription)
+
         else:
             message_history.append({
                 'role': 'user',
@@ -102,3 +104,7 @@ def add_in_weather_data(message_history, transcription):
         """,
     })
     return message_history
+
+
+def add_in_news_data(message_history, transcription):
+    pass

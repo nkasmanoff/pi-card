@@ -114,7 +114,7 @@ class ActionEngine:
                     })
                     os.system(f"espeak 'Taking a photo.'")
                     os.system("libcamera-still -o images/image.jpg")
-                    os.system(f"espeak 'Photo taken. Now analyzing'")
+                    os.system(f"espeak 'Photo taken.'")
 
                     prompt = '"<image>\n\nQuestion: Describe this image.\n\nAnswer: "'
                     response = ""
@@ -182,8 +182,8 @@ if __name__ == "__main__":
                                  ollama_model=LOCAL_MODEL,
                                  message_history=message_history)
 
-    wake_word_listener = WakeWordListener(timeout=5,
-                                          phrase_time_limit=5,
+    wake_word_listener = WakeWordListener(timeout=2,
+                                          phrase_time_limit=2,
                                           sounds_path=SOUNDS_PATH,
                                           wake_word=WAKE_WORD,
                                           action_engine=action_engine,
