@@ -93,12 +93,10 @@ def add_in_weather_data(message_history, transcription):
 
     message_history.append({
         'role': 'user',
-        'content': f"""Here is the current weather data. Use this to answer my questions: 
-        
+        'content': f"""Here is the current weather data:        
         Location: {location}
         Time: {time}
-        Temperature: {temp} degrees Celsius
- 
+        Temperature: {temp} C 
         Question:
         {transcription}
         """,
