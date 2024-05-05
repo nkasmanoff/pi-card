@@ -97,9 +97,6 @@ def add_in_weather_data(message_history, transcription):
         Realtime:
         {rt_response.text}
 
-        Forecast:
-        {forecast_response.text}
-
         Question:
         {transcription}
         """,
