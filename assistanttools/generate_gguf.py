@@ -3,7 +3,7 @@ import os
 
 
 def generate_gguf(llama_cpp_path, model_path, mmproj_path, image_path, prompt, temp):
-    command = f"./{llama_cpp_path}llava-cli -m {model_path} --mmproj {mmproj_path} --image {image_path} --temp {temp} -p {prompt} -c 26"
+    command = f"./{llama_cpp_path}llava-cli -m {model_path} --mmproj {mmproj_path} --image {image_path} --temp {temp} -p {prompt} -c 26 --mlock"
     print("Command: ", command)
     process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)
     # print each output as it appears
@@ -12,7 +12,7 @@ def generate_gguf(llama_cpp_path, model_path, mmproj_path, image_path, prompt, t
 
 
 def generate_gguf_stream(llama_cpp_path, model_path, mmproj_path, image_path, prompt, temp):
-    command = f"./{llama_cpp_path}llava-cli -m {model_path} --mmproj {mmproj_path} --image {image_path} --temp {temp} -p {prompt}"
+    command = f"./{llama_cpp_path}llava-cli --no-mmap -m {model_path} --mmproj {mmproj_path} --image {image_path} --temp {temp} -p {prompt}"
     print("Command: ", command)
     process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)
 
@@ -25,7 +25,7 @@ if __name__ == '__main__':
 
     # take an image with the camera
 
-    os.system("libcamera-still -o image.jpg")
+    # os.system("libcamera-still -o image.jpg")
     temp = 0.
     prompt = '"<image>\n\nQuestion: What do you see?\n\nAnswer: "'
 
@@ -40,7 +40,7 @@ if __name__ == '__main__':
     for line in generate_gguf_stream(llama_cpp_path="../md-gguf/llama.cpp/",
                                      model_path="../picorder-moondream2/moondream2-text-model.Q8.gguf",
                                      mmproj_path="../md-gguf/moondream2/moondream2-mmproj-f16.gguf",
-                                     image_path="image.jpg",
+                                     image_path="images/image.jpg",
                                      prompt=prompt,
                                      temp=0.):
         if ' ' in line:

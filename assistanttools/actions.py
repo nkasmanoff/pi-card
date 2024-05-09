@@ -1,22 +1,40 @@
 import ollama
 import os
 import requests
+from bs4 import BeautifulSoup
 from dotenv import load_dotenv
 load_dotenv()
 
 message_history = [{
     'role': 'system',
-    'content': 'You are a helpful AI voice assistant. Replies should be no more than two sentences.',
+    'content': 'You are a helpful AI voice assistant hosted on a Raspberry Pi.',
 }]
 
+sentence_stoppers = ['. ', '.\n', '? ', '! ', '?\n', '!\n', '.\n']
 
-def get_llm_response(transcription, message_history, streaming=True, model_name='mistral:instruct', max_spoken_tokens=300, use_rag=True):
+
+def preload_model(model_name="llama3:instruct"):
+    print("Preparing model...")
+    os.system(
+        f"curl http://localhost:11434/api/chat -d '{{\"model\": \"{model_name}\"}}'")
+
+    print("Model preloaded.")
+    return
+
+
+def get_llm_response(transcription, message_history, streaming=True, model_name='llama3:instruct', max_spoken_tokens=300, use_rag=True, condense_messages=True):
+
+    if condense_messages:
+        message_history = [message_history[0]]
+
     if use_rag:
         # Experimental idea for supplmenting with external data. Tool use may be better but this could start.
         if 'weather' in transcription:
+            os.system(f"espeak 'Getting weather data.'")
             message_history = add_in_weather_data(
                 message_history, transcription)
         elif "news" in transcription:
+            os.system(f"espeak 'Getting news data.'")
             message_history = add_in_news_data(message_history, transcription)
 
         else:
@@ -24,12 +42,13 @@ def get_llm_response(transcription, message_history, streaming=True, model_name=
                 'role': 'user',
                 'content': transcription,
             })
+
     print("Now asking llm...")
     if streaming:
-
+        num_sentences = 0
         stream = ollama.chat(model=model_name,
                              stream=True, messages=message_history)
-
+        early_stopping = False
         response = ""
         streaming_word = ""
         for i, chunk in enumerate(stream):
@@ -43,12 +62,15 @@ def get_llm_response(transcription, message_history, streaming=True, model_name=
                 continue
             if ' ' in streaming_word:
                 streaming_word_clean = streaming_word.replace(
-                    '"', "").replace("\n", " ").replace("'", "").replace("*", "").replace('-', '').replace(':', '')
-
+                    '"', "").replace("\n", " ").replace("'", "").replace("*", "").replace('-', '').replace(':', '').replace('!', '')
                 os.system(f"espeak '{streaming_word_clean}'")
                 streaming_word = ""
 
-        os.system(f"espeak '{streaming_word}'")
+            if any(p in response for p in sentence_stoppers) and num_sentences < 1:
+                num_sentences += 1
+
+        if not early_stopping:
+            os.system(f"espeak '{streaming_word}'")
 
     else:
 
@@ -91,20 +113,62 @@ def add_in_weather_data(message_history, transcription):
     data = rt_response.json()['data']
     time = data['time']
     temp = data['values']['temperature']
+    humidity = data['values']['humidity']
+    precipitation = data['values']['precipitationProbability']
+    cloudCover = data['values']['cloudCover']
+
     location = rt_response.json()['location']['name']
 
     message_history.append({
         'role': 'user',
         'content': f"""Here is the current weather data:        
+
         Location: {location}
         Time: {time}
         Temperature: {temp} C 
+        Humidity: {humidity}%
+        Precipitation Probability: {precipitation}%
+        Cloud Cover: {cloudCover}%
+
         Question:
         {transcription}
+
+        Answer:
         """,
     })
     return message_history
 
 
 def add_in_news_data(message_history, transcription):
+
+    url = "https://news.ycombinator.com/"
+
+    response = requests.get(url)
+    soup = BeautifulSoup(response.text, 'html.parser')
+
+    news = soup.find_all('tr', class_='athing')
+    top_articles = ""
+    for n in news[:5]:
+        top_articles += n.text + "\n"
+
+    message_history.append({
+        'role': 'user',
+        'content': f"""Here are the top articles on HackerNews:        
+
+        {top_articles}
+
+        
+        Question:
+        Can you summarize what they are for me?
+
+        Answer:
+        """,
+    })
+    return message_history
+
+
+def generate_image_response(model_name, transcription):
+    """
+    Generate an image response.
+    """
     pass

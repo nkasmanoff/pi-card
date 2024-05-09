@@ -12,3 +12,5 @@ images/
 **wakeword_temp.wav
 **wake.wav
 **audio.wav
+
+.env

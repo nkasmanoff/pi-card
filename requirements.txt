@@ -4,3 +4,4 @@ librosa
 soundfile
 pyaudio
 python-dotenv
+BeautifulSoup4

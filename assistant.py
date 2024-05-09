@@ -1,7 +1,7 @@
 import speech_recognition as sr
 import librosa
 import os
-from assistanttools.actions import get_llm_response, message_history
+from assistanttools.actions import get_llm_response, message_history, preload_model
 from assistanttools.generate_gguf import generate_gguf_stream
 from assistanttools.transcribe_gguf import transcribe_gguf
 import soundfile as sf
@@ -173,6 +173,7 @@ if __name__ == "__main__":
         WHISPER_MODEL_PATH, LLAMA_CPP_PATH, MOONDREAM_MMPROJ_PATH, \
         MOONDREAM_MODEL_PATH, LOCAL_MODEL
 
+    preload_model()
     action_engine = ActionEngine(sounds_path=SOUNDS_PATH,
                                  whisper_cpp_path=WHISPER_CPP_PATH,
                                  whisper_model_path=WHISPER_MODEL_PATH,
