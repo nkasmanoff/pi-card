@@ -12,7 +12,7 @@ def generate_gguf(llama_cpp_path, model_path, mmproj_path, image_path, prompt, t
 
 
 def generate_gguf_stream(llama_cpp_path, model_path, mmproj_path, image_path, prompt, temp):
-    command = f"./{llama_cpp_path}llava-cli --no-mmap -m {model_path} --mmproj {mmproj_path} --image {image_path} --temp {temp} -p {prompt}"
+    command = f"./{llama_cpp_path}llava-cli -m {model_path} --mmproj {mmproj_path} --image {image_path} --temp {temp} -p {prompt}"
     print("Command: ", command)
     process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)
 

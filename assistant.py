@@ -114,7 +114,7 @@ class ActionEngine:
                     })
                     os.system(f"espeak 'Taking a photo.'")
                     os.system("libcamera-still -o images/image.jpg")
-                    os.system(f"espeak 'Photo taken.'")
+                    os.system(f"espeak 'Photo taken. Please wait.'")
 
                     prompt = '"<image>\n\nQuestion: Describe this image.\n\nAnswer: "'
                     response = ""

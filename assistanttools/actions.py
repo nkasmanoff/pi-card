@@ -7,7 +7,7 @@ load_dotenv()
 
 message_history = [{
     'role': 'system',
-    'content': 'You are a helpful AI voice assistant hosted on a Raspberry Pi.',
+    'content': 'You are a helpful AI voice assistant hosted on a Raspberry Pi. Keep answers brief.',
 }]
 
 sentence_stoppers = ['. ', '.\n', '? ', '! ', '?\n', '!\n', '.\n']
@@ -121,13 +121,11 @@ def add_in_weather_data(message_history, transcription):
 
     message_history.append({
         'role': 'user',
-        'content': f"""Here is the current weather data:        
+        'content': f"""Current weather data:        
 
-        Location: {location}
-        Time: {time}
-        Temperature: {temp} C 
+        T: {temp} C 
         Humidity: {humidity}%
-        Precipitation Probability: {precipitation}%
+        Rain Prob: {precipitation}%
         Cloud Cover: {cloudCover}%
 
         Question:
@@ -148,7 +146,7 @@ def add_in_news_data(message_history, transcription):
 
     news = soup.find_all('tr', class_='athing')
     top_articles = ""
-    for n in news[:5]:
+    for n in news[:1]:
         top_articles += n.text + "\n"
 
     message_history.append({
