@@ -6,6 +6,8 @@ from assistanttools.generate_gguf import generate_gguf_stream
 from assistanttools.transcribe_gguf import transcribe_gguf
 import soundfile as sf
 import re
+import json
+import uuid
 
 
 class WakeWordListener:
@@ -68,7 +70,8 @@ class ActionEngine:
             moondream_mmproj_path,
             moondream_model_path,
             ollama_model,
-            message_history):
+            message_history,
+            store_conversations):
         self.sounds_path = sounds_path
         self.whisper_cpp_path = whisper_cpp_path
         self.whisper_model_path = whisper_model_path
@@ -77,6 +80,8 @@ class ActionEngine:
         self.moondream_model_path = moondream_model_path
         self.ollama_model = ollama_model
         self.message_history = message_history
+        self.store_conversations = store_conversations
+        self.conversation_id = str(uuid.uuid4())
 
     def run_second_listener(self, duration):
         recognizer = sr.Recognizer()
@@ -140,7 +145,11 @@ class ActionEngine:
                 else:
                     os.system(f"play -v .1 sounds/heard.wav")
                     response, self.message_history = get_llm_response(
-                        transcription, self.message_history)
+                        transcription, self.message_history, model_name=self.ollama_model)
+                # save appended message history to json
+                if self.store_conversations:
+                    with open(f"storage/{self.conversation_id}.json", "w") as f:
+                        json.dump(self.message_history, f, indent=4)
 
             except sr.UnknownValueError:
                 print("Could not understand audio")
@@ -171,9 +180,9 @@ class ActionEngine:
 if __name__ == "__main__":
     from config import SOUNDS_PATH, WAKE_WORD, WHISPER_CPP_PATH, \
         WHISPER_MODEL_PATH, LLAMA_CPP_PATH, MOONDREAM_MMPROJ_PATH, \
-        MOONDREAM_MODEL_PATH, LOCAL_MODEL
+        MOONDREAM_MODEL_PATH, LOCAL_MODEL, STORE_CONVERSATIONS
 
-    preload_model()
+    preload_model(LOCAL_MODEL)
     action_engine = ActionEngine(sounds_path=SOUNDS_PATH,
                                  whisper_cpp_path=WHISPER_CPP_PATH,
                                  whisper_model_path=WHISPER_MODEL_PATH,
@@ -181,7 +190,8 @@ if __name__ == "__main__":
                                  moondream_mmproj_path=MOONDREAM_MMPROJ_PATH,
                                  moondream_model_path=MOONDREAM_MODEL_PATH,
                                  ollama_model=LOCAL_MODEL,
-                                 message_history=message_history)
+                                 message_history=message_history,
+                                 store_conversations=STORE_CONVERSATIONS)
 
     wake_word_listener = WakeWordListener(timeout=2,
                                           phrase_time_limit=2,

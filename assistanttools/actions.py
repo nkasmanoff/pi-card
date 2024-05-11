@@ -7,7 +7,7 @@ load_dotenv()
 
 message_history = [{
     'role': 'system',
-    'content': 'You are a helpful AI voice assistant hosted on a Raspberry Pi. Keep answers brief.',
+    'content': 'You are a helpful AI voice assistant hosted on a Raspberry Pi 5. Keep answers brief.',
 }]
 
 sentence_stoppers = ['. ', '.\n', '? ', '! ', '?\n', '!\n', '.\n']
@@ -24,9 +24,6 @@ def preload_model(model_name="llama3:instruct"):
 
 def get_llm_response(transcription, message_history, streaming=True, model_name='llama3:instruct', max_spoken_tokens=300, use_rag=True, condense_messages=True):
 
-    if condense_messages:
-        message_history = [message_history[0]]
-
     if use_rag:
         # Experimental idea for supplmenting with external data. Tool use may be better but this could start.
         if 'weather' in transcription:
@@ -37,17 +34,26 @@ def get_llm_response(transcription, message_history, streaming=True, model_name=
             os.system(f"espeak 'Getting news data.'")
             message_history = add_in_news_data(message_history, transcription)
 
+        elif "system" in transcription:
+            os.system(f"espeak 'Getting system information.'")
+            message_history = get_system_data(message_history, transcription)
+
         else:
             message_history.append({
                 'role': 'user',
                 'content': transcription,
             })
 
+    if condense_messages:
+        msg_history = [message_history[0], message_history[-1]]
+
+    else:
+        msg_history = message_history
     print("Now asking llm...")
     if streaming:
         num_sentences = 0
         stream = ollama.chat(model=model_name,
-                             stream=True, messages=message_history)
+                             stream=True, messages=msg_history)
         early_stopping = False
         response = ""
         streaming_word = ""
@@ -170,3 +176,28 @@ def generate_image_response(model_name, transcription):
     Generate an image response.
     """
     pass
+
+
+def get_system_data(message_history, transcription):
+    """
+    Get system data.
+    """
+
+    os.system(f"espeak 'Getting system information.'")
+
+    message_history.append({
+        'role': 'user',
+        'content': f"""Here is the system information:        
+
+        System: Raspberry Pi 5
+        Memory: 8GB
+        Storage: 128GB
+        OS: Raspbian
+
+        Question:
+        {transcription}
+
+        Answer:
+        """,
+    })
+    return message_history

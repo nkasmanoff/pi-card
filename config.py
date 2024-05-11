@@ -13,4 +13,5 @@ MOONDREAM_MMPROJ_PATH = "../md-gguf/moondream2/moondream2-mmproj-f16.gguf"
 MOONDREAM_MODEL_PATH = "../picorder-moondream2/moondream2-text-model.Q8.gguf"
 
 # Text Assistant
-LOCAL_MODEL = "phi3:instruct"
+LOCAL_MODEL = "llama3:instruct"
+STORE_CONVERSATIONS = True
