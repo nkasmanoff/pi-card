@@ -3,7 +3,7 @@ import os
 
 
 def generate_gguf(llama_cpp_path, model_path, mmproj_path, image_path, prompt, temp):
-    command = f"./{llama_cpp_path}llava-cli -m {model_path} --mmproj {mmproj_path} --image {image_path} --temp {temp} -p {prompt} -c 26 --mlock"
+    command = f"./{llama_cpp_path}llava-cli -m {model_path} --mmproj {mmproj_path} --image {image_path} --temp {temp} -p {prompt}"
     print("Command: ", command)
     process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)
     # print each output as it appears
@@ -37,7 +37,7 @@ if __name__ == '__main__':
     #                       temp=0.)
     # print('--------------')
     # print(output)
-    for line in generate_gguf_stream(llama_cpp_path="../md-gguf/llama.cpp/",
+    for line in generate_gguf_stream(llama_cpp_path="../md-gguf/llama.cpp/",  # without md-gguf for the vulkan version (not working)
                                      model_path="../picorder-moondream2/moondream2-text-model.Q8.gguf",
                                      mmproj_path="../md-gguf/moondream2/moondream2-mmproj-f16.gguf",
                                      image_path="images/image.jpg",

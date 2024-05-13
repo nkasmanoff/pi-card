@@ -59,14 +59,14 @@ def get_llm_response(transcription, message_history, streaming=True, model_name=
         streaming_word = ""
         for i, chunk in enumerate(stream):
             text_chunk = chunk['message']['content']
-            print(text_chunk)
+            print('||', text_chunk, '||')
             streaming_word += text_chunk
 
             response += text_chunk
 
             if i > max_spoken_tokens:
                 continue
-            if ' ' in streaming_word:
+            if is_complete_word(text_chunk):
                 streaming_word_clean = streaming_word.replace(
                     '"', "").replace("\n", " ").replace("'", "").replace("*", "").replace('-', '').replace(':', '').replace('!', '')
                 os.system(f"espeak '{streaming_word_clean}'")
@@ -80,7 +80,7 @@ def get_llm_response(transcription, message_history, streaming=True, model_name=
 
     else:
 
-        response = ollama.chat(model='phi3:instruct',
+        response = ollama.chat(model=model_name,
                                stream=False, messages=message_history)
         response = response['message']['content']
 
@@ -97,13 +97,13 @@ def get_llm_response(transcription, message_history, streaming=True, model_name=
     return response, message_history
 
 
-def check_if_word(text_chunk):
+def is_complete_word(text_chunk):
     """
     Given the subword outputs from streaming, as these chunks are added together, check if they form a coherent word. If so, return the word.
     """
     if ' ' in text_chunk:
-        return text_chunk
-    return ""
+        return True
+    return False
 
 
 def add_in_weather_data(message_history, transcription):

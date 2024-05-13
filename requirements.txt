@@ -5,3 +5,6 @@ soundfile
 pyaudio
 python-dotenv
 BeautifulSoup4
+transformers
+torch
+Pillow
