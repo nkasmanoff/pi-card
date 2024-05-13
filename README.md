@@ -17,7 +17,7 @@ Raspberry **Pi** - **C**amera **A**udio **R**ecognition **D**evice.
 
 <img src="assets/picard-facepalm.jpg" height="300">
 
-Please submit an issue or pull request if you can think of a better way to force this ackronym.
+Please submit an issue or pull request if you can think of a better way to force this acronym.
 
 ### How does it work?
 Pi-card runs entirely on your Raspberry Pi. Once the main program is run, the system will listen for your wake word. Once your wake word has been said, you are officially in a conversation. Within this conversation you do not need to constantly repeat the wake word. The system will continue to listen for your commands until you say something like "stop", "exit", or "goodbye". 
