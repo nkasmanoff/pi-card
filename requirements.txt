@@ -8,3 +8,5 @@ BeautifulSoup4
 transformers
 torch
 Pillow
+matplotlib
+timm
