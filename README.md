@@ -62,7 +62,7 @@ In both cases, please clone these repositories wherever you like, and add their 
 
 Once cloned, please go to each repository, and follow the setup instructions to get the models running. Some pointers are given below:
 
-For llama.cpp, we are using the vision language model capabilities, which are slightly different from the standard setup. You will need to follow the setup instructions for [LlaVA](https://github.com/ggerganov/llama.cpp/blob/master/examples/llava/README.md), but update the model to be used to be one better suited for this device, [Moondream2](moondream.ai) 
+For llama.cpp, we are using the vision language model capabilities, which are slightly different from the standard setup. You will need to follow the setup instructions for [LlaVA](https://github.com/ggerganov/llama.cpp/blob/master/examples/llava/README.md), but update the model to be used to be one better suited for this device, [Moondream2](https://moondream.ai) 
 
 To install Moondream, you'll need to go to HuggingFace model hub, and download the model. I did so using python, with the following commands. Once again, make sure the vision model path is added to the `config.py` file.
 
