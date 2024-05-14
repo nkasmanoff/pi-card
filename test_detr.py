@@ -7,9 +7,15 @@ from transformers import pipeline
 
 import matplotlib.pyplot as plt
 from random import choice
+import os
 
-url = "https://projects.thecity.nyc/hows-new-york-city-doing/assets/lead-image.jpg"
-image = Image.open(requests.get(url, stream=True).raw)
+
+# take image with camera
+os.system("libcamera-still -o images/detr-image.jpg")
+
+image = Image.open("images/detr-image.jpg")
+
+# image = Image.open(requests.get(url, stream=True).raw)
 
 # you can specify the revision tag if you don't want the timm dependency
 
