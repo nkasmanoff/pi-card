@@ -37,7 +37,9 @@ def dictate_ollama_stream(stream, early_stopping=False, max_spoken_tokens=250):
         streaming_word += text_chunk
         response += text_chunk
         if i > max_spoken_tokens:
-            continue
+            early_stopping = True
+            break
+
         if is_complete_word(text_chunk):
             streaming_word_clean = streaming_word.replace(
                 '"', "").replace("\n", " ").replace("'", "").replace("*", "").replace('-', '').replace(':', '').replace('!', '')

@@ -26,7 +26,7 @@ def preload_model(model_name="llama3:instruct"):
     return
 
 
-def get_llm_response(transcription, message_history, streaming=True, model_name='llama3:instruct', use_rag=True):
+def get_llm_response(transcription, message_history, model_name='llama3:instruct', use_rag=True):
     print("Here's what you said: ", transcription)
     if use_rag:
         # Experimental idea for supplmenting with external data. Tool use may be better but this could start.
