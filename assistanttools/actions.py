@@ -186,6 +186,10 @@ def generate_image_response(message_history, transcription):
         os.system(f"espeak '{word}'")
 
     message_history.append({
+        'role': 'user',
+        'content': transcription,
+    })
+    message_history.append({
         'role': 'assistant',
         'content': response,
     })
