@@ -3,7 +3,7 @@ import os
 import requests
 from bs4 import BeautifulSoup
 from dotenv import load_dotenv
-from config import SYSTEM_PROMPT, LOCAL_MODEL, LLAMA_CPP_PATH, MOONDREAM_MMPROJ_PATH, MOONDREAM_MODEL_PATH, VISION_MODEL, CONDENSE_MESSAGES
+from config import config
 from .generate_detr import generate_bounding_box_caption, model, processor
 from .generate_gguf import generate_gguf_stream
 from .utils import check_if_vision_mode, dictate_ollama_stream
@@ -11,7 +11,7 @@ load_dotenv()
 
 message_history = [{
     'role': 'system',
-    'content': SYSTEM_PROMPT,
+    'content': config['SYSTEM_PROMPT'],
 }]
 
 sentence_stoppers = ['. ', '.\n', '? ', '! ', '?\n', '!\n', '.\n']
@@ -53,7 +53,7 @@ def get_llm_response(transcription, message_history, streaming=True, model_name=
                 'content': transcription,
             })
 
-    if CONDENSE_MESSAGES:
+    if config['CONDENSE_MESSAGES'] and len(message_history) > 1:
         msg_history = [message_history[0], message_history[-1]]
 
     else:
@@ -141,7 +141,7 @@ def generate_image_response(message_history, transcription):
     """
     Generate an image response.
     """
-    if VISION_MODEL == 'detr':
+    if config["VISION_MODEL"] == 'detr':
         caption = generate_bounding_box_caption(model, processor)
 
         message_history.append({
@@ -156,12 +156,12 @@ def generate_image_response(message_history, transcription):
             Answer:
             """,
         })
-        stream = ollama.chat(model=LOCAL_MODEL,
+        stream = ollama.chat(model=config["LOCAL_MODEL"],
                              stream=True, messages=message_history)
 
         response = dictate_ollama_stream(stream)
 
-    elif VISION_MODEL == 'moondream':
+    elif config["VISION_MODEL"] == 'moondream':
         os.system(f"espeak 'Taking a picture.'")
 
         os.system("libcamera-still -o images/detr-image.jpg")
@@ -171,9 +171,9 @@ def generate_image_response(message_history, transcription):
         response = ""
         word = ""
 
-        for chunk in generate_gguf_stream(llama_cpp_path=LLAMA_CPP_PATH,
-                                          model_path=MOONDREAM_MODEL_PATH,
-                                          mmproj_path=MOONDREAM_MMPROJ_PATH,
+        for chunk in generate_gguf_stream(llama_cpp_path=config["LLAMA_CPP_PATH"],
+                                          model_path=config["MOONDREAM_MODEL_PATH"],
+                                          mmproj_path=config["MOONDREAM_MMPROJ_PATH"],
                                           image_path="images/image.jpg",
                                           prompt=prompt,
                                           temp=0.):

@@ -125,25 +125,22 @@ class ActionEngine:
 
 
 if __name__ == "__main__":
-    from config import SOUNDS_PATH, WAKE_WORD, WHISPER_CPP_PATH, \
-        WHISPER_MODEL_PATH, LOCAL_MODEL, STORE_CONVERSATIONS, VISION_MODEL, \
-        TIMEOUT, PHRASE_TIME_LIMIT
-
-    preload_model(LOCAL_MODEL)
-    action_engine = ActionEngine(sounds_path=SOUNDS_PATH,
-                                 whisper_cpp_path=WHISPER_CPP_PATH,
-                                 whisper_model_path=WHISPER_MODEL_PATH,
-                                 ollama_model=LOCAL_MODEL,
+    from config import config
+    preload_model(config["LOCAL_MODEL"])
+    action_engine = ActionEngine(sounds_path=config["SOUNDS_PATH"],
+                                 whisper_cpp_path=config["WHISPER_CPP_PATH"],
+                                 whisper_model_path=config["WHISPER_MODEL_PATH"],
+                                 ollama_model=config["LOCAL_MODEL"],
                                  message_history=message_history,
-                                 store_conversations=STORE_CONVERSATIONS,
-                                 vision_model=VISION_MODEL)
+                                 store_conversations=config["STORE_CONVERSATIONS"],
+                                 vision_model=config["VISION_MODEL"])
 
-    wake_word_listener = WakeWordListener(timeout=TIMEOUT,
-                                          phrase_time_limit=PHRASE_TIME_LIMIT,
-                                          sounds_path=SOUNDS_PATH,
-                                          wake_word=WAKE_WORD,
+    wake_word_listener = WakeWordListener(timeout=config["TIMEOUT"],
+                                          phrase_time_limit=config["PHRASE_TIME_LIMIT"],
+                                          sounds_path=config["SOUNDS_PATH"],
+                                          wake_word=config["WAKE_WORD"],
                                           action_engine=action_engine,
-                                          whisper_cpp_path=WHISPER_CPP_PATH,
-                                          whisper_model_path=WHISPER_MODEL_PATH)
+                                          whisper_cpp_path=config["WHISPER_CPP_PATH"],
+                                          whisper_model_path=config["WHISPER_MODEL_PATH"])
 
     wake_word_listener.listen_for_wake_word()

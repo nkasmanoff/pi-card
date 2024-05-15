@@ -2,9 +2,9 @@ from transformers import DetrImageProcessor, DetrForObjectDetection
 from PIL import Image
 import os
 from torch import tensor
-from config import VISION_MODEL
+from config import config
 
-if VISION_MODEL == 'detr':
+if config["VISION_MODEL"] == 'detr':
 
     processor = DetrImageProcessor.from_pretrained(
         "facebook/detr-resnet-50", revision="no_timm")
