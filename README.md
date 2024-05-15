@@ -107,3 +107,5 @@ Coming soon, but I plan to add notes here on things currently implemented, and w
 - [ ] Test overclocking
 - [ ] Figure out how to speed up whisper times
 - [ ] Add more external services
+- [ ] Add ability to interrupt assistant, and ask new question
+- [ ] Test combining with smart home or other devices?
