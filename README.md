@@ -8,6 +8,7 @@
 - [Usage](#usage)
 - [Hardware](#hardware)
 - [Setup](#setup)
+- [Roadmap](#roadmap)
 
 
 ## Demos
@@ -96,3 +97,13 @@ work on other devices as well.
 Feel free to use your own, this is what worked for me. 
 
 
+## Roadmap
+
+Coming soon, but I plan to add notes here on things currently implemented, and what can be done in the future. Some quick notes on it are below
+
+- [x] Basic conversation capabilities
+- [x] Camera capabilities
+- [ ] Benchmark response times
+- [ ] Test overclocking
+- [ ] Figure out how to speed up whisper times
+- [ ] Add more external services
