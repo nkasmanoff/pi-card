@@ -17,7 +17,7 @@ Raspberry **Pi** - **C**amera **A**udio **R**ecognition **D**evice.
 
 <img src="assets/picard-facepalm.jpg" height="300">
 
-Please submit an issue or pull request if you can think of a better way to force this ackronym.
+Please submit an issue or pull request if you can think of a better way to force this acronym.
 
 ### How does it work?
 Pi-card runs entirely on your Raspberry Pi. Once the main program is run, the system will listen for your wake word. Once your wake word has been said, you are officially in a conversation. Within this conversation you do not need to constantly repeat the wake word. The system will continue to listen for your commands until you say something like "stop", "exit", or "goodbye". 
@@ -62,7 +62,7 @@ In both cases, please clone these repositories wherever you like, and add their 
 
 Once cloned, please go to each repository, and follow the setup instructions to get the models running. Some pointers are given below:
 
-For llama.cpp, we are using the vision language model capabilities, which are slightly different from the standard setup. You will need to follow the setup instructions for [LlaVA](https://github.com/ggerganov/llama.cpp/blob/master/examples/llava/README.md), but update the model to be used to be one better suited for this device, [Moondream2](moondream.ai) 
+For llama.cpp, we are using the vision language model capabilities, which are slightly different from the standard setup. You will need to follow the setup instructions for [LlaVA](https://github.com/ggerganov/llama.cpp/blob/master/examples/llava/README.md), but update the model to be used to be one better suited for this device, [Moondream2](https://moondream.ai) 
 
 To install Moondream, you'll need to go to HuggingFace model hub, and download the model. I did so using python, with the following commands. Once again, make sure the vision model path is added to the `config.py` file.
 
