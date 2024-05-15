@@ -3,10 +3,16 @@
 <img src="assets/assistant.png" height="300">
 
 ## Table of Contents
+- [Demos](#demos)
 - [Introduction](#introduction)
 - [Usage](#usage)
 - [Hardware](#hardware)
 - [Setup](#setup)
+
+
+## Demos
+
+[Talking to Llama 3 on a Raspberry Pi](https://www.youtube.com/watch?v=OryGVbh5JZE)
 
 ## Introduction
 Pi-card is an AI powered voice assistant running entirely on a Raspberry Pi. It is capable of doing anything a standard LLM (like ChatGPT) can do in a conversational setting. 
