@@ -11,6 +11,6 @@ config = {
     "VISION_MODEL": "moondream",
     "LOCAL_MODEL": "llama3:instruct",
     "STORE_CONVERSATIONS": True,
-    "CONDENSE_MESSAGES": False,
+    "CONDENSE_MESSAGES": True,
     "SYSTEM_PROMPT": 'You are PiCard, a Raspbery Pi Voice Assistant. Please help users with brief answers.'
 }

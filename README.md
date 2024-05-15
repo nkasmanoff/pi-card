@@ -43,13 +43,6 @@ python main.py
 Once the program is running, you can start a conversation with the assistant by saying the wake word. The default wake word is "hey assistant", but you can change this in the `config.py` file.
 
 
-## Hardware
-- Raspberry Pi 5 Model B
-- USB Microphone
-- Speaker
-- Camera
-
-
 ## Setup
 
 ### Software
@@ -76,6 +69,7 @@ snapshot_download(repo_id=model_id, local_dir=your/local/path, local_dir_use_sym
 
 For whisper.cpp, you will need to follow the quick-start guide in the [README](https://github.com/ggerganov/whisper.cpp?tab=readme-ov-file#quick-start).
 
+Since this project is depending on openly available models, depending on the ones used, the limitations of this assistant will be the same as limitations of the models.
 
 ### Hardware
 
@@ -90,6 +84,9 @@ I used the following hardware for my setup:
 - [Camera](https://www.amazon.com/dp/B012V1HEP4?ref=ppx_yo2ov_dt_b_product_details&th=1)
 - [Camera Connector](https://www.amazon.com/dp/B0716TB6X3?psc=1&ref=ppx_yo2ov_dt_b_product_details)
 
-Please note Pi 5's have a new camera port, hence the new camera connector.
+Please note Pi 5's have a new camera port, hence the new camera connector. At the same time, while this project is focused on making this work on a Raspberry Pi 5, it should 
+work on other devices as well.
 
-Feel free to use your own, this is what worked for me.
+Feel free to use your own, this is what worked for me. 
+
+
