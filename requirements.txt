@@ -5,3 +5,8 @@ soundfile==0.12.1
 PyAudio==0.2.14
 python-dotenv==1.0.1
 beautifulsoup4==4.12.3
+transformers
+torch
+Pillow
+matplotlib
+timm

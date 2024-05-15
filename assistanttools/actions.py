@@ -3,11 +3,15 @@ import os
 import requests
 from bs4 import BeautifulSoup
 from dotenv import load_dotenv
+from config import SYSTEM_PROMPT, LOCAL_MODEL, LLAMA_CPP_PATH, MOONDREAM_MMPROJ_PATH, MOONDREAM_MODEL_PATH, VISION_MODEL, CONDENSE_MESSAGES
+from .generate_detr import generate_bounding_box_caption, model, processor
+from .generate_gguf import generate_gguf_stream
+from .utils import check_if_vision_mode, dictate_ollama_stream
 load_dotenv()
 
 message_history = [{
     'role': 'system',
-    'content': 'You are a helpful AI voice assistant hosted on a Raspberry Pi 5. Keep answers brief.',
+    'content': SYSTEM_PROMPT,
 }]
 
 sentence_stoppers = ['. ', '.\n', '? ', '! ', '?\n', '!\n', '.\n']
@@ -22,14 +26,19 @@ def preload_model(model_name="llama3:instruct"):
     return
 
 
-def get_llm_response(transcription, message_history, streaming=True, model_name='llama3:instruct', max_spoken_tokens=300, use_rag=True, condense_messages=True):
-
+def get_llm_response(transcription, message_history, streaming=True, model_name='llama3:instruct', use_rag=True):
+    print("Here's what you said: ", transcription)
     if use_rag:
         # Experimental idea for supplmenting with external data. Tool use may be better but this could start.
         if 'weather' in transcription:
             os.system(f"espeak 'Getting weather data.'")
             message_history = add_in_weather_data(
                 message_history, transcription)
+        elif check_if_vision_mode(transcription):
+            os.system(f"espeak 'Getting image data.'")
+            response, message_history = generate_image_response(
+                message_history, transcription)
+            return response, message_history
         elif "news" in transcription:
             os.system(f"espeak 'Getting news data.'")
             message_history = add_in_news_data(message_history, transcription)
@@ -44,50 +53,16 @@ def get_llm_response(transcription, message_history, streaming=True, model_name=
                 'content': transcription,
             })
 
-    if condense_messages:
+    if CONDENSE_MESSAGES:
         msg_history = [message_history[0], message_history[-1]]
 
     else:
         msg_history = message_history
-    print("Now asking llm...")
-    if streaming:
-        num_sentences = 0
-        stream = ollama.chat(model=model_name,
-                             stream=True, messages=msg_history)
-        early_stopping = False
-        response = ""
-        streaming_word = ""
-        for i, chunk in enumerate(stream):
-            text_chunk = chunk['message']['content']
-            print(text_chunk)
-            streaming_word += text_chunk
 
-            response += text_chunk
+    stream = ollama.chat(model=model_name,
+                         stream=True, messages=msg_history)
 
-            if i > max_spoken_tokens:
-                continue
-            if ' ' in streaming_word:
-                streaming_word_clean = streaming_word.replace(
-                    '"', "").replace("\n", " ").replace("'", "").replace("*", "").replace('-', '').replace(':', '').replace('!', '')
-                os.system(f"espeak '{streaming_word_clean}'")
-                streaming_word = ""
-
-            if any(p in response for p in sentence_stoppers) and num_sentences < 1:
-                num_sentences += 1
-
-        if not early_stopping:
-            os.system(f"espeak '{streaming_word}'")
-
-    else:
-
-        response = ollama.chat(model='phi3:instruct',
-                               stream=False, messages=message_history)
-        response = response['message']['content']
-
-        clean_response = response.replace(
-            '"', "").replace("\n", " ").replace("'", "").replace("*", "")
-
-        os.system(f"espeak '{clean_response}'")
+    response = dictate_ollama_stream(stream)
 
     message_history.append({
         'role': 'assistant',
@@ -95,15 +70,6 @@ def get_llm_response(transcription, message_history, streaming=True, model_name=
     })
 
     return response, message_history
-
-
-def check_if_word(text_chunk):
-    """
-    Given the subword outputs from streaming, as these chunks are added together, check if they form a coherent word. If so, return the word.
-    """
-    if ' ' in text_chunk:
-        return text_chunk
-    return ""
 
 
 def add_in_weather_data(message_history, transcription):
@@ -127,9 +93,9 @@ def add_in_weather_data(message_history, transcription):
 
     message_history.append({
         'role': 'user',
-        'content': f"""Current weather data:        
+        'content': f"""Current weather data:
 
-        T: {temp} C 
+        T: {temp} C
         Humidity: {humidity}%
         Rain Prob: {precipitation}%
         Cloud Cover: {cloudCover}%
@@ -157,13 +123,13 @@ def add_in_news_data(message_history, transcription):
 
     message_history.append({
         'role': 'user',
-        'content': f"""Here are the top articles on HackerNews:        
+        'content': f"""Here are the top articles on HackerNews:
 
         {top_articles}
 
-        
+
         Question:
-        Can you summarize what they are for me?
+        {transcription}
 
         Answer:
         """,
@@ -171,11 +137,60 @@ def add_in_news_data(message_history, transcription):
     return message_history
 
 
-def generate_image_response(model_name, transcription):
+def generate_image_response(message_history, transcription):
     """
     Generate an image response.
     """
-    pass
+    if VISION_MODEL == 'detr':
+        caption = generate_bounding_box_caption(model, processor)
+
+        message_history.append({
+            'role': 'user',
+            'content': f"""Here is the image description:
+
+            {caption}
+
+            Question:
+            {transcription}
+
+            Answer:
+            """,
+        })
+        stream = ollama.chat(model=LOCAL_MODEL,
+                             stream=True, messages=message_history)
+
+        response = dictate_ollama_stream(stream)
+
+    elif VISION_MODEL == 'moondream':
+        os.system(f"espeak 'Taking a picture.'")
+
+        os.system("libcamera-still -o images/detr-image.jpg")
+        os.system(f"espeak 'Analyzing the image.'")
+
+        prompt = '"<image>\n\nQuestion: What do you see?\n\nAnswer: "'
+        response = ""
+        word = ""
+
+        for chunk in generate_gguf_stream(llama_cpp_path=LLAMA_CPP_PATH,
+                                          model_path=MOONDREAM_MODEL_PATH,
+                                          mmproj_path=MOONDREAM_MMPROJ_PATH,
+                                          image_path="images/image.jpg",
+                                          prompt=prompt,
+                                          temp=0.):
+            word += chunk
+            if ' ' in chunk:
+                os.system(f"espeak '{word}'")
+                response += word
+                word = ""
+
+        os.system(f"espeak '{word}'")
+
+    message_history.append({
+        'role': 'assistant',
+        'content': response,
+    })
+
+    return response, message_history
 
 
 def get_system_data(message_history, transcription):
