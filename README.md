@@ -37,7 +37,7 @@ The main reason for this is that I wanted to create a voice assistant that is co
 ## Usage
 After downloading the repository, installing the requirements, and following the other setup instructions, you can run the main program by running the following command:
 ```bash
-python assistant.py
+python main.py
 ```
 
 Once the program is running, you can start a conversation with the assistant by saying the wake word. The default wake word is "hey assistant", but you can change this in the `config.py` file.

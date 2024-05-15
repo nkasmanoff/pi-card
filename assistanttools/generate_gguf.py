@@ -38,7 +38,7 @@ if __name__ == '__main__':
     # print('--------------')
     # print(output)
     for line in generate_gguf_stream(llama_cpp_path="../md-gguf/llama.cpp/",  # without md-gguf for the vulkan version (not working)
-                                     model_path="../picorder-moondream2/moondream2-text-model.Q8.gguf",
+                                     model_path="../moondream-quants/moondream2-text-model.Q8.gguf",
                                      mmproj_path="../md-gguf/moondream2/moondream2-mmproj-f16.gguf",
                                      image_path="images/image.jpg",
                                      prompt=prompt,
