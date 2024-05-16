@@ -4,7 +4,7 @@ config = {
     "TIMEOUT": 2,
     "PHRASE_TIME_LIMIT": 5,
     "WHISPER_CPP_PATH": "../whisper.cpp/",
-    "WHISPER_MODEL_PATH": "/home/nkasmanoff/Desktop/whisper.cpp/models/ggml-tiny.en.bin",
+    "WHISPER_MODEL_PATH": "/home/nkasmanoff/Desktop/whisper.cpp/models/ggml-base.en.bin",
     "LLAMA_CPP_PATH": "../md-gguf/llama.cpp/",
     "MOONDREAM_MMPROJ_PATH": "../moondream-quants/moondream2-mmproj-050824-f16.gguf",
     "MOONDREAM_MODEL_PATH": "../moondream-quants/moondream2-050824-q8.gguf",

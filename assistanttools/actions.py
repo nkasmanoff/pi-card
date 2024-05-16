@@ -202,8 +202,6 @@ def get_system_data(message_history, transcription):
     Get system data.
     """
 
-    os.system(f"espeak 'Getting system information.'")
-
     message_history.append({
         'role': 'user',
         'content': f"""Here is the system information:        
