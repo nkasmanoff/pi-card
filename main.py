@@ -1,7 +1,7 @@
 import speech_recognition as sr
 import librosa
 import os
-from assistanttools.actions import get_llm_response, message_history, preload_model, generate_image_response
+from assistanttools.actions import get_llm_response, message_history, preload_model
 from assistanttools.transcribe_gguf import transcribe_gguf
 import soundfile as sf
 import json
@@ -37,7 +37,7 @@ class WakeWordListener:
             with sr.Microphone() as source:
                 try:
                     audio = recognizer.listen(
-                        source, timeout=self.timeout, phrase_time_limit=self.phrase_time_limit)
+                        source, timeout=self.timeout // 2, phrase_time_limit=self.phrase_time_limit // 2)
                 except sr.WaitTimeoutError:
                     continue
 
