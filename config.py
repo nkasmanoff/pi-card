@@ -1,7 +1,7 @@
 config = {
     "SOUNDS_PATH": 'sounds/',
     "WAKE_WORD": ["rasp", "berry", "barry", "razbear", "brad", "raster"],
-    "TIMEOUT": 2,
+    "TIMEOUT": 5,
     "PHRASE_TIME_LIMIT": 5,
     "WHISPER_CPP_PATH": "../whisper.cpp/",
     "WHISPER_MODEL_PATH": "/home/nkasmanoff/Desktop/whisper.cpp/models/ggml-base.en.bin",
@@ -12,5 +12,5 @@ config = {
     "LOCAL_MODEL": "llama3:instruct",  # better responses, higher latency
     "STORE_CONVERSATIONS": True,  # to save in case we you want to analyze later
     "CONDENSE_MESSAGES": True,  # for faster response time
-    "SYSTEM_PROMPT": 'You are PiCard, a witty Raspbery Pi Voice Assistant. Please help users with brief answers.'
+    "SYSTEM_PROMPT": 'You are PiCard, a witty Raspbery Pi Voice Assistant. Please help by answering questions in only a sentence or two.'
 }

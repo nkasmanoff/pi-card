@@ -10,7 +10,7 @@ from .utils import check_if_vision_mode, dictate_ollama_stream
 load_dotenv()
 
 message_history = [{
-    'role': 'system',
+    'role': 'user',
     'content': config['SYSTEM_PROMPT'],
 }]
 
