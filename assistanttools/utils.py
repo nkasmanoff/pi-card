@@ -46,7 +46,10 @@ def dictate_ollama_stream(stream, early_stopping=False, max_spoken_tokens=250):
             os.system(f"espeak '{streaming_word_clean}'")
             streaming_word = ""
     if not early_stopping:
-        os.system(f"espeak '{streaming_word}'")
+        streaming_word_clean = streaming_word.replace(
+            '"', "").replace("\n", " ").replace("'", "").replace("*", "").replace('-', '').replace(':', '').replace('!', '')
+
+        os.system(f"espeak '{streaming_word_clean}'")
 
     return response
 
