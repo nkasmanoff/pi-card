@@ -43,10 +43,6 @@ def get_llm_response(transcription, message_history, model_name='llama3:instruct
             os.system(f"espeak 'Getting news data.'")
             message_history = add_in_news_data(message_history, transcription)
 
-        elif "system" in transcription:
-            os.system(f"espeak 'Getting system information.'")
-            message_history = get_system_data(message_history, transcription)
-
         else:
             message_history.append({
                 'role': 'user',
@@ -83,7 +79,6 @@ def add_in_weather_data(message_history, transcription):
     rt_url = f"https://api.tomorrow.io/v4/weather/realtime?location=new%20york&apikey={api_key}"
     rt_response = requests.get(rt_url, headers=headers)
     data = rt_response.json()['data']
-    time = data['time']
     temp = data['values']['temperature']
     humidity = data['values']['humidity']
     precipitation = data['values']['precipitationProbability']
@@ -95,6 +90,7 @@ def add_in_weather_data(message_history, transcription):
         'role': 'user',
         'content': f"""Current weather data:
 
+        Location: {location}
         T: {temp} C
         Humidity: {humidity}%
         Rain Prob: {precipitation}%
@@ -195,26 +191,3 @@ def generate_image_response(message_history, transcription):
     })
 
     return response, message_history
-
-
-def get_system_data(message_history, transcription):
-    """
-    Get system data.
-    """
-
-    message_history.append({
-        'role': 'user',
-        'content': f"""Here is the system information:        
-
-        System: Raspberry Pi 5
-        Memory: 8GB
-        Storage: 128GB
-        OS: Raspbian
-
-        Question:
-        {transcription}
-
-        Answer:
-        """,
-    })
-    return message_history
