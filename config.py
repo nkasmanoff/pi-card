@@ -13,5 +13,7 @@ config = {
     "LOCAL_MODEL": "phi3:instruct",  # better responses, higher latency
     "STORE_CONVERSATIONS": True,  # to save in case we you want to analyze later
     "CONDENSE_MESSAGES": True,  # for faster response time
+    # number of messages to keep in memory (odd #s work best)
+    "TRAILING_MESSAGE_COUNT": 3,
     "SYSTEM_PROMPT": 'You are PiCard, a witty Raspbery Pi Voice Assistant. Please help by answering questions in only a sentence or two.'
 }
