@@ -24,12 +24,10 @@ if __name__ == '__main__':
 
     # take an image with the camera
     # Load the audio file in librosa
-    y, sr = librosa.load("audio.wav", sr=16000)
-    # save
-    sf.write("audio.wav", y, sr)
+    audio_path = "/home/nkasmanoff/Desktop/whisper.cpp/samples/jfk.wav"
 
     output = transcribe_gguf(whisper_cpp_path="../whisper.cpp/",
-                             model_path="/home/nkasmanoff/Desktop/whisper.cpp/models/ggml-tiny.en.bin",
-                             file_path="audio.wav")
+                             model_path="/home/nkasmanoff/Desktop/whisper.cpp/models/ggml-base.en.bin",
+                             file_path=audio_path)
 
     print("Output: ", output)

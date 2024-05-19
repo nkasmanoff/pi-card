@@ -54,7 +54,7 @@ Once the program is running, you can start a conversation with the assistant by 
 
 ### Software
 
-To keep this system as fast and lean as possible, we use cpp implementations of the audio transcription and vision language models. These are done with the wonderful libraries [whipser.cpp](https://github.com/ggerganov/whisper.cpp
+To keep this system as fast and lean as possible, we use cpp implementations of the audio transcription and vision language models. These are done with the wonderful libraries [whisper.cpp](https://github.com/ggerganov/whisper.cpp
 ) for the audio transcription and [llama.cpp](https://github.com/ggerganov/llama.cpp
 ) for the vision language model.
 
@@ -96,6 +96,47 @@ work on other devices as well.
 
 Feel free to use your own, this is what worked for me. 
 
+## Benchmarks
+
+This table is a VERY approximate benchmark of the response times of various models. 
+
+### Transcription Models
+
+
+| Model | Load Time | Total Time |
+|-------|-----------|------------|
+| Whisper Tiny (en) | 0.113s | 1.76s |
+| Whisper Base (en) | 0.159s | 3.36s |
+
+
+### Large Language Models
+
+Since this one varies based on how large the conversation / response is, just putting the approximate tokens per second metrics here.
+
+| Model  |  Prompt | Eval | ~ Time to Respond |
+|--------|---------|------|-------------------|
+| Phi 3 Instruct (3B) | 4.65 tok/s | 3.8 tok/s | 3.5s |
+| Llama 3 Instruct (8B) | 2.37s | 2.00s |  5.0s |
+
+
+### Vision Language Model
+
+| Model | Load Image In Context Time | Start Generating Time |
+|-------|-----------|------------|
+| Moondream2 | 62s | 3.5s |
+
+Meaning that for vision language models, the biggest bottleneck is loading all of the "silent" image tokens in the llm memory. For moondream, this is 729 image tokens, so understandable it takes a bit of time.
+
+
+
+## Overclocking 
+
+Do this at your own risk! 
+
+One way I have found to speed up all of the numbers above is by overclocking my Raspberry Pi. You can do so by following the instructions [here](https://www.tomshardware.com/how-to/overclock-raspberry-pi-5). I would NOT recommend going all the way up to 3.0 GHz, and it is possible your machine won't even let you do so. I have only managed to raise mine to 2.6 GHz, it has crashed once, but otherwise works, and speeds up all the benchmarks above in what I think is roughly proportional to the improved clock speed.
+
+
+I would recommend doing this if you are comfortable with the chance of burning out the device, extra power consumption. Make sure you have a good cooling system in place.
 
 ## Roadmap
 
@@ -103,8 +144,8 @@ Coming soon, but I plan to add notes here on things currently implemented, and w
 
 - [x] Basic conversation capabilities
 - [x] Camera capabilities
-- [ ] Benchmark response times
-- [ ] Test overclocking
+- [x] Benchmark response times
+- [x] Test overclocking
 - [ ] Figure out how to speed up whisper times
 - [ ] Add more external services
 - [ ] Add ability to interrupt assistant, and ask new question
