@@ -49,6 +49,11 @@ def get_llm_response(transcription, message_history, model_name='llama3:instruct
                 'role': 'user',
                 'content': transcription,
             })
+    else:
+        message_history.append({
+            'role': 'user',
+            'content': transcription,
+        })
 
     if config['CONDENSE_MESSAGES'] and len(message_history) > config['TRAILING_MESSAGE_COUNT'] + 1:
         # remove all but the first and last n messages
@@ -145,12 +150,12 @@ def generate_image_response(message_history, transcription):
 
         message_history.append({
             'role': 'user',
-            'content': f"""Here is the image description:
+            'content': f"""Here is a description of the objects detected by an AI model:
 
             {caption}
 
             Question:
-            {transcription}
+            Please summarize what this image saw.
 
             Answer:
             """,
@@ -163,7 +168,7 @@ def generate_image_response(message_history, transcription):
     elif config["VISION_MODEL"] == 'moondream':
         os.system(f"espeak 'Taking a picture.'")
 
-        os.system("libcamera-still -o images/detr-image.jpg")
+        os.system("libcamera-still -o images/image.jpg")
         os.system(f"espeak 'Analyzing the image.'")
 
         prompt = '"<image>\n\nQuestion: What do you see?\n\nAnswer: "'

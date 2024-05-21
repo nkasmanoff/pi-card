@@ -2,11 +2,22 @@ import speech_recognition as sr
 import librosa
 import os
 from assistanttools.actions import get_llm_response, message_history, preload_model
-from assistanttools.transcribe_gguf import transcribe_gguf
+from faster_whisper import WhisperModel
 import soundfile as sf
 import json
 import uuid
 from assistanttools.utils import check_if_exit, check_if_ignore
+
+
+model = WhisperModel("base.en")
+
+
+def transcribe_audio(file_path):
+    segments, _ = model.transcribe(file_path)
+    segments = list(segments)  # The transcription will actually run here.
+    transcript = " ".join([x.text for x in segments]).strip()
+    print("Transcription: ", transcript)
+    return transcript
 
 
 class WakeWordListener:
@@ -26,18 +37,16 @@ class WakeWordListener:
         self.action_engine = action_engine
         self.whisper_cpp_path = whisper_cpp_path
         self.whisper_model_path = whisper_model_path
-        self.command_timeout = 5
-        self.command_duration = 5
 
     def listen_for_wake_word(self):
 
         recognizer = sr.Recognizer()
-        os.system(f"espeak 'Hello, I am ready to assist you.'")
+        os.system(f"espeak 'Hello. How can I help you today?'")
         while True:
             with sr.Microphone() as source:
                 try:
                     audio = recognizer.listen(
-                        source, timeout=self.timeout // 2, phrase_time_limit=self.phrase_time_limit // 2)
+                        source, timeout=self.timeout // 3, phrase_time_limit=self.phrase_time_limit // 2)
                 except sr.WaitTimeoutError:
                     continue
 
@@ -49,14 +58,13 @@ class WakeWordListener:
                     f"{self.sounds_path}audio.wav", sr=16000)
                 sf.write(f"{self.sounds_path}audio.wav", speech, rate)
 
-                transcription = transcribe_gguf(whisper_cpp_path=self.whisper_cpp_path,
-                                                model_path=self.whisper_model_path,
-                                                file_path=f"{self.sounds_path}audio.wav")
+                transcription = transcribe_audio(
+                    file_path=f"{self.sounds_path}audio.wav")
 
                 if any(x in transcription.lower() for x in self.wake_word):
                     os.system(f"espeak 'Yes?'")
-                    self.action_engine.run_second_listener(timeout=self.command_timeout,
-                                                           duration=self.command_duration)
+                    self.action_engine.run_second_listener(timeout=self.timeout,
+                                                           duration=self.phrase_time_limit)
 
             except sr.UnknownValueError:
                 print("Could not understand audio")
@@ -99,9 +107,8 @@ class ActionEngine:
                     f"{self.sounds_path}command.wav", sr=16000)
                 sf.write(f"{self.sounds_path}command.wav", speech, rate)
 
-                transcription = transcribe_gguf(whisper_cpp_path=self.whisper_cpp_path,
-                                                model_path=self.whisper_model_path,
-                                                file_path=f"{self.sounds_path}command.wav")
+                transcription = transcribe_audio(
+                    file_path=f"{self.sounds_path}command.wav")
 
                 if check_if_ignore(transcription):
                     continue
@@ -112,7 +119,7 @@ class ActionEngine:
 
                 else:
                     os.system(f"play -v .1 sounds/notification.wav")
-                    response, self.message_history = get_llm_response(
+                    _, self.message_history = get_llm_response(
                         transcription, self.message_history, model_name=self.ollama_model)
 
                 # save appended message history to json

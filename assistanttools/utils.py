@@ -22,7 +22,7 @@ def check_if_ignore(transcription):
     This happens if the whisper prediction is "you" or "." or "", or is some sound effect like wind blowing, usually inside parentheses.
     These are things caused by having the fan so close to the microphone, definitely need to fix.
     """
-    if transcription.strip() == "you" or transcription.strip() == "." or transcription.strip() == "":
+    if transcription.strip().lower() == "you" or transcription.strip() == "." or transcription.strip() == "":
         return True
     if re.match(r"\(.*\)", transcription):
         return True
@@ -58,7 +58,7 @@ def is_complete_word(text_chunk):
     """
     Given the subword outputs from streaming, as these chunks are added together, check if they form a coherent word. If so, return the word.
     """
-    if ' ' in text_chunk:
+    if ' ' in text_chunk or all([x not in text_chunk for x in ['a', 'e', 'i', 'o', 'u']]):
         return True
     return False
 

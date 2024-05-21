@@ -1,9 +1,9 @@
 config = {
     "SOUNDS_PATH": 'sounds/',
     "WAKE_WORD": ["rasp", "berry", "barry", "razbear", "brad", "raster"],
-    "TIMEOUT": 15,
+    "TIMEOUT": 10,
     # longest amount of time the allow a phrase to continue before stopping the recording
-    "PHRASE_TIME_LIMIT": 10,
+    "PHRASE_TIME_LIMIT": 5,
     "WHISPER_CPP_PATH": "../whisper.cpp/",
     "WHISPER_MODEL_PATH": "/home/nkasmanoff/Desktop/whisper.cpp/models/ggml-base.en.bin",
     "LLAMA_CPP_PATH": "../md-gguf/llama.cpp/",
