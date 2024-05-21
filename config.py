@@ -1,7 +1,7 @@
 config = {
     "SOUNDS_PATH": 'sounds/',
     "WAKE_WORD": ["rasp", "berry", "barry", "razbear", "brad", "raster"],
-    "TIMEOUT": 15,
+    "TIMEOUT": 10,
     # longest amount of time the allow a phrase to continue before stopping the recording
     "PHRASE_TIME_LIMIT": 7,
     "WHISPER_CPP_PATH": "../whisper.cpp/",

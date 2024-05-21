@@ -39,9 +39,8 @@ class WakeWordListener:
         self.whisper_model_path = whisper_model_path
 
     def listen_for_wake_word(self):
-
         recognizer = sr.Recognizer()
-        os.system(f"espeak 'Hello.'")
+        os.system(f"espeak 'Hello. How can I assist you?'")
         while True:
             with sr.Microphone() as source:
                 try:
@@ -58,8 +57,11 @@ class WakeWordListener:
                     f"{self.sounds_path}audio.wav", sr=16000)
                 sf.write(f"{self.sounds_path}audio.wav", speech, rate)
 
+
+                print("Starting transcription...")
                 transcription = transcribe_audio(
                     file_path=f"{self.sounds_path}audio.wav")
+                print("Wake Word Heard: ", transcription)
 
                 if any(x in transcription.lower() for x in self.wake_word):
                     os.system(f"espeak 'Yes?'")
