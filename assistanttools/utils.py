@@ -61,3 +61,10 @@ def is_complete_word(text_chunk):
     if ' ' in text_chunk:
         return True
     return False
+
+
+def remove_parentheses(transcription):
+    """
+    Remove parentheses and their contents from the transcription.
+    """
+    return re.sub(r"\(.*\)", "", transcription).strip()

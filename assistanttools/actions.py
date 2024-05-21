@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 from config import config
 from .generate_detr import generate_bounding_box_caption, model, processor
 from .generate_gguf import generate_gguf_stream
-from .utils import check_if_vision_mode, dictate_ollama_stream
+from .utils import check_if_vision_mode, dictate_ollama_stream, remove_parentheses
 load_dotenv()
 
 message_history = [{
@@ -28,6 +28,7 @@ def preload_model(model_name="llama3:instruct"):
 
 def get_llm_response(transcription, message_history, model_name='llama3:instruct', use_rag=True):
     print("Here's what you said: ", transcription)
+    transcription = remove_parentheses(transcription)
     if use_rag:
         # Experimental idea for supplmenting with external data. Tool use may be better but this could start.
         if 'weather' in transcription:
