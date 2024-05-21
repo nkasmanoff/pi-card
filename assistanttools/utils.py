@@ -58,7 +58,7 @@ def is_complete_word(text_chunk):
     """
     Given the subword outputs from streaming, as these chunks are added together, check if they form a coherent word. If so, return the word.
     """
-    if ' ' in text_chunk:
+    if ' ' in text_chunk and all([x not in text_chunk for x in ['a', 'e', 'i', 'o', 'u']]):
         return True
     return False
 

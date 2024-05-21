@@ -49,6 +49,11 @@ def get_llm_response(transcription, message_history, model_name='llama3:instruct
                 'role': 'user',
                 'content': transcription,
             })
+    else:
+        message_history.append({
+            'role': 'user',
+            'content': transcription,
+        })
 
     if config['CONDENSE_MESSAGES'] and len(message_history) > config['TRAILING_MESSAGE_COUNT'] + 1:
         # remove all but the first and last n messages
