@@ -85,8 +85,9 @@ def add_in_weather_data(message_history, transcription):
     headers = {"accept": "application/json"}
 
     rt_url = f"https://api.tomorrow.io/v4/weather/realtime?location=new%20york&apikey={api_key}"
-    rt_response = requests.get(rt_url, headers=headers)
-    if rt_response.status_code != 200:
+    try:
+        rt_response = requests.get(rt_url, headers=headers)
+    except:
         message_history.append({
             'role': 'user',
             'content': "Can you tell me wifi isn't working?",
@@ -124,15 +125,14 @@ def add_in_weather_data(message_history, transcription):
 def add_in_news_data(message_history, transcription):
 
     url = "https://news.ycombinator.com/"
+    try:
+        response = requests.get(url)
 
-    response = requests.get(url)
-
-    if response.status_code != 200:
+    except:
         message_history.append({
             'role': 'user',
             'content': "Can you tell me wifi isn't working?",
         })
-
         return message_history
 
     soup = BeautifulSoup(response.text, 'html.parser')
