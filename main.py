@@ -2,22 +2,30 @@ import speech_recognition as sr
 import librosa
 import os
 from assistanttools.actions import get_llm_response, message_history, preload_model
-from faster_whisper import WhisperModel
 import soundfile as sf
 import json
 import uuid
 from assistanttools.utils import check_if_exit, check_if_ignore
+from config import config
+
+if config['USE_FASTER_WHISPER']:
+    from faster_whisper import WhisperModel
+    model = WhisperModel("base.en")
+
+    def transcribe_audio(file_path):
+        segments, _ = model.transcribe(file_path)
+        segments = list(segments)  # The transcription will actually run here.
+        transcript = " ".join([x.text for x in segments]).strip()
+        return transcript
 
 
-model = WhisperModel("base.en")
+else:
+    from assistanttools.transcribe_gguf import transcribe_gguf
 
-
-def transcribe_audio(file_path):
-    segments, _ = model.transcribe(file_path)
-    segments = list(segments)  # The transcription will actually run here.
-    transcript = " ".join([x.text for x in segments]).strip()
-    print("Transcription: ", transcript)
-    return transcript
+    def transcribe_audio(file_path):
+        return transcribe_gguf(whisper_cpp_path=config["WHISPER_CPP_PATH"],
+                               model_path=config["WHISPER_MODEL_PATH"],
+                               file_path=file_path)
 
 
 class WakeWordListener:
@@ -40,9 +48,11 @@ class WakeWordListener:
 
     def listen_for_wake_word(self):
         recognizer = sr.Recognizer()
-        os.system(f"espeak 'Hello. How can I assist you?'")
+        os.system(f"espeak 'Hello. I am ready to assist you.'")
         while True:
             with sr.Microphone() as source:
+                print("Awaiting wake word...")
+
                 try:
                     audio = recognizer.listen(
                         source, timeout=self.timeout // 3, phrase_time_limit=self.phrase_time_limit // 2)
@@ -57,11 +67,8 @@ class WakeWordListener:
                     f"{self.sounds_path}audio.wav", sr=16000)
                 sf.write(f"{self.sounds_path}audio.wav", speech, rate)
 
-
-                print("Starting transcription...")
                 transcription = transcribe_audio(
                     file_path=f"{self.sounds_path}audio.wav")
-                print("Wake Word Heard: ", transcription)
 
                 if any(x in transcription.lower() for x in self.wake_word):
                     os.system(f"espeak 'Yes?'")
@@ -95,7 +102,7 @@ class ActionEngine:
         recognizer = sr.Recognizer()
         while True:
             with sr.Microphone() as source:
-                print("Listening for command...")
+                print("Awaiting query...")
                 try:
                     audio = recognizer.listen(
                         source, timeout=timeout, phrase_time_limit=duration)
@@ -117,6 +124,8 @@ class ActionEngine:
 
                 if check_if_exit(transcription):
                     os.system(f"espeak 'Program stopped. See you later!'")
+                    # set message history to empty
+                    self.message_history = [self.message_history[0]]
                     return
 
                 else:
@@ -134,7 +143,6 @@ class ActionEngine:
 
 
 if __name__ == "__main__":
-    from config import config
     preload_model(config["LOCAL_MODEL"])
     action_engine = ActionEngine(sounds_path=config["SOUNDS_PATH"],
                                  whisper_cpp_path=config["WHISPER_CPP_PATH"],
