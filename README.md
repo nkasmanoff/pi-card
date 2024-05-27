@@ -138,6 +138,30 @@ One way I have found to speed up all of the numbers above is by overclocking my 
 
 I would recommend doing this if you are comfortable with the chance of burning out the device, extra power consumption. Make sure you have a good cooling system in place.
 
+## Building the Docker Image
+
+To build the Docker image, navigate to the directory containing the Dockerfile and run the following command:
+
+```bash
+docker build -t pi-card .
+```
+
+## Running the Docker Container (recommended)
+
+To run the Docker container via `docker compose`, run the following command:
+
+```bash
+docker compose up
+```
+
+## Running the Docker Container (not recommended)
+
+To run the Docker container, run the following command:
+
+```bash
+docker run -it --device /dev/snd pi-card
+```
+
 ## Roadmap
 
 Coming soon, but I plan to add notes here on things currently implemented, and what can be done in the future. Some quick notes on it are below

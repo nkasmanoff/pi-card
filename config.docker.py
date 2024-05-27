@@ -5,11 +5,11 @@ config = {
     # longest amount of time the allow a phrase to continue before stopping the recording
     "PHRASE_TIME_LIMIT": 7,
     "USE_FASTER_WHISPER": False,
-    "WHISPER_CPP_PATH": "/home/marc/Dev/whisper.cpp/",
-    "WHISPER_MODEL_PATH": "/home/marc/Dev/whisper.cpp/models/ggml-tiny.en.bin",
-    # "LLAMA_CPP_PATH": "/home/marc/Dev/llama.cpp/",
-    # "MOONDREAM_MMPROJ_PATH": "/home/marc/Dev/pi-card/moondream-quants/moondream2-mmproj-050824-f16.gguf",
-    # "MOONDREAM_MODEL_PATH": "/home/marc/Dev/pi-card/moondream-quants/moondream2-050824-q8.gguf",
+    "WHISPER_CPP_PATH": "/app/whisper.cpp/",
+    "WHISPER_MODEL_PATH": "/app/whisper.cpp/models/ggml-tiny.en.bin",
+    # "LLAMA_CPP_PATH": "/app/llama.cpp/",
+    # "MOONDREAM_MMPROJ_PATH": "/app/moondream-quants/moondream2-mmproj-050824-f16.gguf",
+    # "MOONDREAM_MODEL_PATH": "/app/moondream-quants/moondream2-050824-q8.gguf",
     # "VISION_MODEL": "moondream",
     "LOCAL_MODEL": "phi3:instruct",  # better responses, higher latency
     "STORE_CONVERSATIONS": True,  # to save in case we you want to analyze later

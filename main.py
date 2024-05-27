@@ -88,7 +88,7 @@ class ActionEngine:
             ollama_model,
             message_history,
             store_conversations,
-            vision_model):
+            vision_model=None):
         self.sounds_path = sounds_path
         self.whisper_cpp_path = whisper_cpp_path
         self.whisper_model_path = whisper_model_path
@@ -149,8 +149,9 @@ if __name__ == "__main__":
                                  whisper_model_path=config["WHISPER_MODEL_PATH"],
                                  ollama_model=config["LOCAL_MODEL"],
                                  message_history=message_history,
-                                 store_conversations=config["STORE_CONVERSATIONS"],
-                                 vision_model=config["VISION_MODEL"])
+                                 store_conversations=config["STORE_CONVERSATIONS"]
+                                #  ,vision_model=config["VISION_MODEL"]
+                                 )
 
     wake_word_listener = WakeWordListener(timeout=config["TIMEOUT"],
                                           phrase_time_limit=config["PHRASE_TIME_LIMIT"],
