@@ -50,7 +50,7 @@ class WakeWordListener:
         recognizer = sr.Recognizer()
         os.system(f"espeak 'Hello. I am ready to assist you.'")
         while True:
-            with sr.Microphone() as source:
+            with sr.Microphone(device_index=config["MICROPHONE_DEVICE_INDEX"]) as source:
                 print("Awaiting wake word...")
 
                 try:
@@ -101,7 +101,7 @@ class ActionEngine:
     def run_second_listener(self, timeout, duration):
         recognizer = sr.Recognizer()
         while True:
-            with sr.Microphone() as source:
+            with sr.Microphone(device_index=config["MICROPHONE_DEVICE_INDEX"]) as source:
                 print("Awaiting query...")
                 try:
                     audio = recognizer.listen(

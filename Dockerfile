@@ -1,6 +1,11 @@
 # Use an official Python runtime as a parent image
 FROM debian:latest
 
+RUN apt-get update && apt-get install -y \
+alsa-base alsa-utils
+RUN aplay -l
+RUN arecord -l
+
 # Set the working directory in the container to /app
 WORKDIR /app
 
@@ -25,9 +30,6 @@ python3-venv
 RUN python3 -m venv /app/venv
 ENV PATH="/app/venv/bin:$PATH"
 
-# hack to make python3 the default python
-RUN ln -s /app/venv/bin/python3 /app/venv/bin/python
-
 # Verify installations
 RUN python --version
 RUN pip --version
@@ -39,26 +41,13 @@ RUN curl -fsSL https://ollama.com/install.sh | sh
 # Install any needed packages specified in requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Download the Moondream model
-# RUN python download_moondream_model.docker.py
-
-# TODO Build llama with moondream model?
 # Clone the whisper.cpp and llama repositories
 RUN git clone https://github.com/ggerganov/whisper.cpp
-# RUN git clone https://github.com/ggerganov/llama.cpp
-# RUN git clone https://github.com/vikhyat/moondream
-
-# Download the whisper.cpp model
-# RUN bash /app/whisper.cpp/models/download-ggml-model.sh base.en
-
-# Build whisper.cpp
 RUN cd /app/whisper.cpp && make
 
-# Build llama.cpp
-# RUN cd /app/llama.cpp && make && make llama-cli
-# RUN cd /app/llama.cpp && make
+# Copy the start script into the Docker image and make it executable
+COPY start.sh /app/start.sh
+RUN chmod +x /app/start.sh
 
-# RUN cd /app
-
-# Run app.py when the container launches
-CMD ["python", "main.py"]
+# Run start.sh when the container launches
+CMD ["/app/start.sh"]
