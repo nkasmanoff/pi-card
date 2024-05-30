@@ -7,6 +7,7 @@ from config import config
 from .generate_detr import generate_bounding_box_caption, model, processor
 from .generate_gguf import generate_gguf_stream
 from .utils import check_if_vision_mode, dictate_ollama_stream, remove_parentheses
+from .bert import load_model, predict_tool
 load_dotenv()
 
 message_history = [{
@@ -17,7 +18,10 @@ message_history = [{
 sentence_stoppers = ['. ', '.\n', '? ', '! ', '?\n', '!\n', '.\n']
 
 
-def preload_model(model_name="llama3:instruct"):
+model, tokenizer = load_model()
+
+
+def preload_model(model_name):
     print("Preparing model...")
     os.system(
         f"curl http://localhost:11434/api/chat -d '{{\"model\": \"{model_name}\"}}'")
@@ -30,21 +34,25 @@ def get_llm_response(transcription, message_history, model_name='llama3:instruct
     print("Here's what you said: ", transcription)
     transcription = remove_parentheses(transcription)
     if use_rag:
+        predicted_tool = predict_tool(transcription, model, tokenizer)
         # Experimental idea for supplmenting with external data. Tool use may be better but this could start.
-        if 'weather' in transcription:
+        if predicted_tool == 'check_weather':
             os.system(f"espeak 'Getting weather data.'")
             message_history = add_in_weather_data(
                 message_history, transcription)
-        elif check_if_vision_mode(transcription):
+        elif predicted_tool == 'take_picture':
             os.system(f"espeak 'Getting image data.'")
             response, message_history = generate_image_response(
                 message_history, transcription)
             return response, message_history
-        elif "news" in transcription:
+        elif predicted_tool == 'check_news':
             os.system(f"espeak 'Getting news data.'")
             message_history = add_in_news_data(message_history, transcription)
 
-        else:
+        elif predicted_tool == 'play_spotify':
+            os.system(f"espeak 'Playing music.'")
+
+        elif predicted_tool == 'no_tool_needed':
             message_history.append({
                 'role': 'user',
                 'content': transcription,
