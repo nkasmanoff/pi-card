@@ -104,7 +104,13 @@ def add_in_weather_data(message_history, transcription):
     except:
         message_history.append({
             'role': 'user',
-            'content': "Can you tell me wifi isn't working?",
+            'content': f"""
+            Context:
+            Unable to connect to weather service. 
+
+            Question:
+            {transcription}
+            """,
         })
 
         return message_history
@@ -144,7 +150,7 @@ def add_in_news_data(message_history, transcription):
     except:
         message_history.append({
             'role': 'user',
-            'content': "Can you tell me the weather app isn't working?",
+            'content': f"Can you tell me if the wifi is working",
         })
         return message_history
 

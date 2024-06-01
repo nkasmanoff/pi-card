@@ -22,17 +22,16 @@ def play_spotify(search_query, message_history):
     result = sp.search(search_query)
 
     track = result['tracks']['items'][0]
-    print(json.dumps(track, indent=4))
     if track:
         if track['preview_url']:
             print("Opening browsers..`")
             webbrowser.open(track['preview_url'])
-            sleep(30)
+            sleep(31)
             message_history.append({
                 'role': 'system',
                 'content': 'Playing music.',
             })
-            os.system('espeak "I hope you liked that!"')
+            os.system('espeak "Let me know if you need anything else."')
 
             return 'Playing music.', message_history
 
@@ -45,4 +44,4 @@ def play_spotify(search_query, message_history):
 
 
 if __name__ == '__main__':
-    play_spotify('Play star trek',[])
+    play_spotify('Play star trek', [])
