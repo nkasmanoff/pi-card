@@ -6,6 +6,7 @@ import spotipy
 import webbrowser
 from dotenv import load_dotenv
 import os
+import requests
 load_dotenv()
 
 
@@ -24,14 +25,22 @@ def play_spotify(search_query, message_history):
     track = result['tracks']['items'][0]
     if track:
         if track['preview_url']:
-            print("Opening browsers..`")
-            webbrowser.open(track['preview_url'])
-            sleep(31)
+            doc = requests.get(track['preview_url'])
+            with open('sounds/myfile.mp3', 'wb') as f:
+                f.write(doc.content)
+            # convert mp3 to .wav format
+            os.system('ffmpeg -i sounds/myfile.mp3 sounds/myfile.wav')
+            # play the music
+            os.system('play sounds/myfile.wav')
+
+            os.system('espeak "That was nice!"')
+            # remove the files
+            os.system('rm sounds/myfile.mp3 sounds/myfile.wav')
+
             message_history.append({
                 'role': 'system',
                 'content': 'Playing music.',
             })
-            os.system('espeak "Let me know if you need anything else."')
 
             return 'Playing music.', message_history
 
@@ -44,4 +53,4 @@ def play_spotify(search_query, message_history):
 
 
 if __name__ == '__main__':
-    play_spotify('Play star trek', [])
+    play_spotify('Halo theme', [])
