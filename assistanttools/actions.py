@@ -8,6 +8,7 @@ from .generate_detr import generate_bounding_box_caption, model, processor
 from .generate_gguf import generate_gguf_stream
 from .utils import check_if_vision_mode, dictate_ollama_stream, remove_parentheses
 from .bert import load_model, predict_tool
+from .play_spotify import play_spotify
 load_dotenv()
 
 message_history = [{
@@ -38,6 +39,7 @@ def get_llm_response(transcription, message_history, model_name='llama3:instruct
         # Experimental idea for supplmenting with external data. Tool use may be better but this could start.
         if predicted_tool == 'check_weather':
             os.system(f"espeak 'Getting weather data.'")
+
             message_history = add_in_weather_data(
                 message_history, transcription)
         elif predicted_tool == 'take_picture':
@@ -51,7 +53,9 @@ def get_llm_response(transcription, message_history, model_name='llama3:instruct
 
         elif predicted_tool == 'play_spotify':
             os.system(f"espeak 'Playing music.'")
-
+            response, message_history = play_spotify(
+                transcription, message_history)
+            return response, message_history
         elif predicted_tool == 'no_tool_needed':
             message_history.append({
                 'role': 'user',
@@ -95,6 +99,8 @@ def add_in_weather_data(message_history, transcription):
     rt_url = f"https://api.tomorrow.io/v4/weather/realtime?location=new%20york&apikey={api_key}"
     try:
         rt_response = requests.get(rt_url, headers=headers)
+        data = rt_response.json()['data']
+
     except:
         message_history.append({
             'role': 'user',
@@ -103,7 +109,6 @@ def add_in_weather_data(message_history, transcription):
 
         return message_history
 
-    data = rt_response.json()['data']
     temp = data['values']['temperature']
     humidity = data['values']['humidity']
     precipitation = data['values']['precipitationProbability']
@@ -139,7 +144,7 @@ def add_in_news_data(message_history, transcription):
     except:
         message_history.append({
             'role': 'user',
-            'content': "Can you tell me wifi isn't working?",
+            'content': "Can you tell me the weather app isn't working?",
         })
         return message_history
 
@@ -147,7 +152,7 @@ def add_in_news_data(message_history, transcription):
 
     news = soup.find_all('tr', class_='athing')
     top_articles = ""
-    for n in news[:1]:
+    for n in news[:3]:
         top_articles += n.text + "\n"
 
     message_history.append({

@@ -1,12 +1,20 @@
 from transformers import AutoTokenizer
 from transformers import AutoModelForSequenceClassification
+from numpy import exp, sum
 
 key_tools = ['take_picture', 'no_tool_needed',
              'check_news', 'check_weather', 'play_spotify']
 
 
+TOOL_THRESHOLD = .95
+
+
 def get_id2tool_name(id, key_tools):
     return key_tools[id]
+
+
+def softmax(x):
+    return exp(x) / sum(exp(x), axis=0)
 
 
 def remove_any_non_alphanumeric_characters(text):
@@ -28,7 +36,12 @@ def predict_tool(question, model, tokenizer):
 
     outputs = model(**inputs)
 
-    logits = outputs.logits
+    logits = outputs.logits.detach().numpy()
+
+    probability = softmax(logits[0]).max()
+
+    if probability < TOOL_THRESHOLD:
+        return 'no_tool_needed'
     return get_id2tool_name(logits.argmax().item(), key_tools)
 
 
