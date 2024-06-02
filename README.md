@@ -72,6 +72,12 @@ model_id="vikhyatk/moondream2"
 snapshot_download(repo_id=model_id, local_dir=your/local/path, local_dir_use_symlinks=False, revision="main")
 ```
 
+#### Tools
+
+To make pi-card a bit more like a real assistant, there are a couple tools it has access to. These are done through [tool-bert](https://huggingface.co/nkasmanoff/tool-bert), a fine-tuned version of BERT deciding when to access external info. 
+
+The model is easy to install, but to enable tool access, take a look at .env.example file for context on what keys and secrets are necessary.
+
 
 
 For whisper.cpp, you will need to follow the quick-start guide in the [README](https://github.com/ggerganov/whisper.cpp?tab=readme-ov-file#quick-start).
