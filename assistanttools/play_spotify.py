@@ -38,14 +38,14 @@ def play_spotify(search_query, message_history):
             os.system('rm sounds/myfile.mp3 sounds/myfile.wav')
 
             message_history.append({
-                'role': 'system',
+                'role': 'assistant',
                 'content': 'Playing music.',
             })
 
             return 'Playing music.', message_history
 
     message_history.append({
-        'role': 'system',
+        'role': 'assistant',
         'content': 'No music found.',
     })
     os.system('espeak "No music found. Try something else!"')
