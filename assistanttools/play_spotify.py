@@ -1,13 +1,21 @@
 
 from spotipy.oauth2 import SpotifyOAuth
-import json
-from time import sleep
 import spotipy
-import webbrowser
+import ollama
 from dotenv import load_dotenv
 import os
 import requests
 load_dotenv()
+
+
+def refine_search_query(search_query):
+    refine_search_prompt = f"""A user wants to play a song on spotify. Please take this request and turn it into something they can search:
+
+    User: {search_query}
+
+    
+"""
+    ollama.generate(model='llama3', prompt="")
 
 
 def play_spotify(search_query, message_history):
