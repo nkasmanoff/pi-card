@@ -7,3 +7,5 @@ As smaller LLMs (< 3B params) can run quickly on a Raspberry Pi and grow more ca
 Please note this notebook should not be run on the Pi itself! It depends on how much of the model you want to tune, but I would suggest at least 16GB of RAM.
 
 The notebook demonstrates how to load chat data from Pi-Card and HuggingFace, fine-tune the model, then convert it to .gguf format and then ollama format, so that it could be run on the Raspberry Pi. similar to the original versions.
+
+This code is based on the excellent example provided by Microsoft [here](https://huggingface.co/microsoft/Phi-3-mini-4k-instruct/resolve/main/sample_finetune.py)
