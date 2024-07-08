@@ -123,7 +123,8 @@ class ActionEngine:
                     continue
 
                 if check_if_exit(transcription):
-                    os.system(f"espeak 'Program stopped. See you later!'")
+                    os.system(
+                        f"espeak 'Program stopped. See you later!'")
                     # set message history to empty
                     self.message_history = [self.message_history[0]]
                     return

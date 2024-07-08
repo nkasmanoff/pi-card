@@ -38,21 +38,16 @@ def get_llm_response(transcription, message_history, model_name='llama3:instruct
         predicted_tool = predict_tool(transcription, model, tokenizer)
         # Experimental idea for supplmenting with external data. Tool use may be better but this could start.
         if predicted_tool == 'check_weather':
-            os.system(f"espeak 'Getting weather data.'")
 
             message_history = add_in_weather_data(
                 message_history, transcription)
         elif predicted_tool == 'take_picture':
-            os.system(f"espeak 'Getting image data.'")
             response, message_history = generate_image_response(
                 message_history, transcription)
             return response, message_history
         elif predicted_tool == 'check_news':
-            os.system(f"espeak 'Getting news data.'")
             message_history = add_in_news_data(message_history, transcription)
-
         elif predicted_tool == 'play_spotify':
-            os.system(f"espeak 'Playing music.'")
             response, message_history = play_spotify(
                 transcription, message_history)
             return response, message_history
