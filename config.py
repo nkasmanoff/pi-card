@@ -16,5 +16,5 @@ config = {
     "CONDENSE_MESSAGES": True,  # for faster response time
     # number of messages to keep in memory (odd #s work best)
     "TRAILING_MESSAGE_COUNT": 1,
-    "SYSTEM_PROMPT": 'You are PiCard, a Raspbery Pi Voice Assistant. Answer questions sarcastically in only a sentence.'
+    "SYSTEM_PROMPT": 'You are PiCard, a Raspbery Pi Voice Assistant. Answer questions in only a sentence.'
 }
