@@ -1,5 +1,5 @@
 config = {
-    "SOUNDS_PATH": 'sounds/',
+    "SOUNDS_PATH": '"/home/nkasmanoff/Desktop/pi-card/sounds/',
     "WAKE_WORD": ["rasp", "berry", "barry", "razbear", "brad", "raster"],
     "TIMEOUT": 10,
     # longest amount of time the allow a phrase to continue before stopping the recording
@@ -11,7 +11,7 @@ config = {
     "MOONDREAM_MMPROJ_PATH": "../moondream-quants/moondream2-mmproj-050824-f16.gguf",
     "MOONDREAM_MODEL_PATH": "../moondream-quants/moondream2-050824-q8.gguf",
     "VISION_MODEL": "moondream",
-    "LOCAL_MODEL": "phi3:instruct",
+    "LOCAL_MODEL": "qwen2:1.5b-instruct",  # "phi3:instruct",
     "STORE_CONVERSATIONS": True,  # to save in case we you want to analyze later
     "CONDENSE_MESSAGES": True,  # for faster response time
     # number of messages to keep in memory (odd #s work best)
