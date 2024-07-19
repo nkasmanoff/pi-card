@@ -15,6 +15,6 @@ config = {
     "STORE_CONVERSATIONS": True,  # to save in case we you want to analyze later
     "CONDENSE_MESSAGES": True,  # for faster response time
     # number of messages to keep in memory (odd #s work best)
-    "TRAILING_MESSAGE_COUNT": 1,
+    "TRAILING_MESSAGE_COUNT": 3,
     "SYSTEM_PROMPT": 'You are PiCard, a Raspbery Pi Voice Assistant. Answer questions in only a sentence.'
 }

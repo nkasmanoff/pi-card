@@ -8,8 +8,6 @@ from assistanttools.actions import get_llm_response, message_history, preload_mo
 from assistanttools.utils import check_if_ignore
 from config import config
 
-model = WhisperModel("tiny.en")
-
 preload_model(config["LOCAL_MODEL"])
 
 
