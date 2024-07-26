@@ -1,5 +1,5 @@
 from assistanttools.transcribe_gguf import transcribe_gguf
-from faster_whisper import WhisperModel
+import os
 import RPi.GPIO as GPIO
 import pyaudio
 import wave

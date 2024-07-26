@@ -11,10 +11,13 @@ from .bert import load_model, predict_tool
 from .play_spotify import play_spotify
 load_dotenv()
 
-message_history = [{
-    'role': 'user',
-    'content': config['SYSTEM_PROMPT'],
-}]
+if config['SYSTEM_PROMPT']:
+    message_history = [{
+        'role': 'user',
+        'content': config['SYSTEM_PROMPT'],
+    }]
+else:
+    message_history = []
 
 sentence_stoppers = ['. ', '.\n', '? ', '! ', '?\n', '!\n', '.\n']
 
