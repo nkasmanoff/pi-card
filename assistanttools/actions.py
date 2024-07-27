@@ -11,10 +11,13 @@ from .bert import load_model, predict_tool
 from .play_spotify import play_spotify
 load_dotenv()
 
-message_history = [{
-    'role': 'user',
-    'content': config['SYSTEM_PROMPT'],
-}]
+if config['SYSTEM_PROMPT']:
+    message_history = [{
+        'role': 'user',
+        'content': config['SYSTEM_PROMPT'],
+    }]
+else:
+    message_history = []
 
 sentence_stoppers = ['. ', '.\n', '? ', '! ', '?\n', '!\n', '.\n']
 
@@ -31,7 +34,7 @@ def preload_model(model_name):
     return
 
 
-def get_llm_response(transcription, message_history, model_name='llama3:instruct', use_rag=True):
+def get_llm_response(transcription, message_history, model_name='llama3:instruct', use_rag=True, GPIO=None):
     print("Here's what you said: ", transcription)
     transcription = remove_parentheses(transcription)
     if use_rag:
@@ -73,7 +76,7 @@ def get_llm_response(transcription, message_history, model_name='llama3:instruct
     stream = ollama.chat(model=model_name,
                          stream=True, messages=msg_history)
 
-    response = dictate_ollama_stream(stream)
+    response = dictate_ollama_stream(stream, GPIO=GPIO)
 
     message_history.append({
         'role': 'assistant',

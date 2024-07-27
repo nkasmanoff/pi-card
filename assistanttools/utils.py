@@ -29,10 +29,14 @@ def check_if_ignore(transcription):
     return False
 
 
-def dictate_ollama_stream(stream, early_stopping=False, max_spoken_tokens=250):
+def dictate_ollama_stream(stream, early_stopping=False, max_spoken_tokens=250, GPIO=None):
     response = ""
     streaming_word = ""
     for i, chunk in enumerate(stream):
+        if GPIO:
+            if GPIO.input(2) == GPIO.LOW:
+                return response
+
         text_chunk = chunk['message']['content']
         streaming_word += text_chunk
         response += text_chunk
