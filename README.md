@@ -1,6 +1,7 @@
 # Pi-C.A.R.D
 
-<img src="assets/assistant.png" height="300">
+<img src="assets/assistant.png" height="200">
+<img src="assets/assistant-gpio.png"  height="200">
 
 ## Table of Contents
 
