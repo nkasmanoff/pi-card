@@ -58,6 +58,8 @@ def record_audio(GPIO):
     wf.close()
 
 
+os.system(
+    f"espeak 'Hello. How can I help you?'")
 while True:
     if GPIO.input(2) == GPIO.LOW:
         print("Button was pushed!")
