@@ -11,4 +11,4 @@ Pillow==10.3.0
 matplotlib==3.8.4
 timm==0.9.16
 faster-whisper==1.0.2
-
+newsapi-python==0.2.7

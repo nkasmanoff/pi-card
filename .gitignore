@@ -20,3 +20,5 @@ storage
 .cache
 
 **wandb
+
+**.ipynb

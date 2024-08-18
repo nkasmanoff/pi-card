@@ -1,6 +1,7 @@
 import ollama
 import os
 import requests
+from newsapi import NewsApiClient
 from bs4 import BeautifulSoup
 from dotenv import load_dotenv
 from config import config
@@ -66,14 +67,9 @@ def get_llm_response(transcription, message_history, model_name='llama3:instruct
         })
 
     if config['CONDENSE_MESSAGES'] and len(message_history) > config['TRAILING_MESSAGE_COUNT'] + 1:
-        if config['SYSTEM_PROMPT']:
-            # remove all but the first and last n messages
-
-            msg_history = message_history[:1] + \
-                message_history[-config['TRAILING_MESSAGE_COUNT']:]
-        else:
-            # remove all but the last n messages
-            msg_history = message_history[-config['TRAILING_MESSAGE_COUNT']:]
+        # remove all but the first and last n messages
+        msg_history = message_history[:1] + \
+            message_history[-config['TRAILING_MESSAGE_COUNT']:]
 
     else:
         msg_history = message_history
@@ -146,36 +142,35 @@ def add_in_weather_data(message_history, transcription):
 
 def add_in_news_data(message_history, transcription):
 
-    url = "https://news.ycombinator.com/"
     try:
-        response = requests.get(url)
-
+        newsapi = NewsApiClient(api_key=os.getenv("NEWS_API_KEY"))
+        top_headlines = newsapi.get_top_headlines(
+                                                language='en',
+                                                country='us')
     except:
         message_history.append({
             'role': 'user',
-            'content': f"Can you tell me if the wifi is working",
+            'content': f"Can you tell me to check if the news tool is working?",
         })
         return message_history
 
-    soup = BeautifulSoup(response.text, 'html.parser')
+    top_articles_str = "" 
+    for article in top_headlines['articles'][:3]:
+        top_articles_str += article['title'] + "\n"
 
-    news = soup.find_all('tr', class_='athing')
-    top_articles = ""
-    for n in news[:3]:
-        top_articles += n.text + "\n"
+    top_articles_str = top_articles_str[:-1]
+
+    prompt = f"""Here are some top news headlines as of today:
+
+    {top_articles_str}
+
+    Please answer the question below: 
+    {transcription}
+    """
 
     message_history.append({
         'role': 'user',
-        'content': f"""Here are the top articles on HackerNews:
-
-        {top_articles}
-
-
-        Question:
-        {transcription}
-
-        Answer:
-        """,
+        'content': f"""{prompt}""",
     })
     return message_history
 
@@ -184,7 +179,20 @@ def generate_image_response(message_history, transcription):
     """
     Generate an image response.
     """
-    if config["VISION_MODEL"] == 'detr':
+    if config['VISION_MODEL'] == 'none':
+        response = "Camera is disabled. Please enable it if you want to use this feature."
+        message_history.append({
+            'role': 'user',
+            'content': transcription,
+        })
+        message_history.append({
+            'role': 'assistant',
+            'content': response,
+        })
+
+        return response, message_history
+    
+    elif config["VISION_MODEL"] == 'detr':
         caption = generate_bounding_box_caption(model, processor)
 
         message_history.append({
