@@ -9,7 +9,8 @@ from assistanttools.utils import check_if_ignore
 from config import config
 import json
 import uuid
-preload_model(config["LOCAL_MODEL"])
+
+preload_model()
 
 
 def transcribe_audio(file_path):

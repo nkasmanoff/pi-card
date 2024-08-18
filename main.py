@@ -144,7 +144,7 @@ class ActionEngine:
 
 
 if __name__ == "__main__":
-    preload_model(config["LOCAL_MODEL"])
+    preload_model()
     action_engine = ActionEngine(sounds_path=config["SOUNDS_PATH"],
                                  whisper_cpp_path=config["WHISPER_CPP_PATH"],
                                  whisper_model_path=config["WHISPER_MODEL_PATH"],

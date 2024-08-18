@@ -26,13 +26,13 @@ sentence_stoppers = ['. ', '.\n', '? ', '! ', '?\n', '!\n', '.\n']
 model, tokenizer = load_model()
 
 
-def preload_model(model_name):
-    print("Preparing model...")
+def preload_model():
+    print("Preparing models...")
     os.system(
-        f"""curl http://localhost:11434/api/chat -d '{{\"model\": \"{config['LOCAL_MODEL']}\"}}'""")
+        f"""curl http://localhost:11434/api/generate -d '{{\"model\": \"{config['LOCAL_MODEL']}\" , \"keep_alive\": \"15m\"}}'""")
 
     os.system(
-        f"""curl http://localhost:11434/api/chat -d '{{\"model\": \"{config['RAG_MODEL']}\"}}'""")
+        f"""curl http://localhost:11434/api/generate -d '{{\"model\": \"{config['RAG_MODEL']}\" , \"keep_alive\": \"15m\"}}'""")
 
     print("Model preloaded.")
     return
