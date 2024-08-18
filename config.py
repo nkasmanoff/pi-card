@@ -11,11 +11,12 @@ config = {
     "MOONDREAM_MMPROJ_PATH": "../moondream-quants/moondream2-mmproj-050824-f16.gguf",
     "MOONDREAM_MODEL_PATH": "../moondream-quants/moondream2-050824-q8.gguf",
     "VISION_MODEL": "none",
-    "LOCAL_MODEL": "gemma2:2b-instruct-q4_0", 
+    "LOCAL_MODEL": "noahpunintended/picard:latest",
+    "RAG_MODEL": "gemma2:2b-instruct-q4_0",
     "STORE_CONVERSATIONS": True,  # to save in case we you want to analyze later
     "CONDENSE_MESSAGES": True,  # for faster response time
     # number of messages to keep in memory (odd #s work best)
     "TRAILING_MESSAGE_COUNT": 3,
-    # "You are Pi-CARD, the Raspberry Pi voice assistant. Please keep answers to no more than a sentence."
-    "SYSTEM_PROMPT": "You are Pi-CARD, the Raspberry Pi voice assistant. Please keep answers to no more than a sentence."
+    # Please keep answers to no more than a sentence."
+    "SYSTEM_PROMPT": "You are Pi-Card, the Raspberry Pi voice assistant."
 }

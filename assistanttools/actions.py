@@ -29,7 +29,10 @@ model, tokenizer = load_model()
 def preload_model(model_name):
     print("Preparing model...")
     os.system(
-        f"curl http://localhost:11434/api/chat -d '{{\"model\": \"{model_name}\"}}'")
+        f"""curl http://localhost:11434/api/chat -d '{{\"model\": \"{config['LOCAL_MODEL']}\"}}'""")
+
+    os.system(
+        f"""curl http://localhost:11434/api/chat -d '{{\"model\": \"{config['RAG_MODEL']}\"}}'""")
 
     print("Model preloaded.")
     return
@@ -38,6 +41,7 @@ def preload_model(model_name):
 def get_llm_response(transcription, message_history, model_name='llama3:instruct', use_rag=True, GPIO=None):
     print("Here's what you said: ", transcription)
     transcription = remove_parentheses(transcription)
+    use_rag_model = False
     if use_rag:
         predicted_tool = predict_tool(transcription, model, tokenizer)
         # Experimental idea for supplmenting with external data. Tool use may be better but this could start.
@@ -45,12 +49,14 @@ def get_llm_response(transcription, message_history, model_name='llama3:instruct
 
             message_history = add_in_weather_data(
                 message_history, transcription)
+            use_rag_model = True
         elif predicted_tool == 'take_picture':
             response, message_history = generate_image_response(
                 message_history, transcription)
             return response, message_history
         elif predicted_tool == 'check_news':
             message_history = add_in_news_data(message_history, transcription)
+            use_rag_model = True
         elif predicted_tool == 'play_spotify':
             response, message_history = play_spotify(
                 transcription, message_history)
@@ -74,7 +80,7 @@ def get_llm_response(transcription, message_history, model_name='llama3:instruct
     else:
         msg_history = message_history
 
-    stream = ollama.chat(model=model_name,
+    stream = ollama.chat(model=model_name if not use_rag_model else config["RAG_MODEL"],
                          stream=True, messages=msg_history)
 
     response = dictate_ollama_stream(stream, GPIO=GPIO)
@@ -145,8 +151,8 @@ def add_in_news_data(message_history, transcription):
     try:
         newsapi = NewsApiClient(api_key=os.getenv("NEWS_API_KEY"))
         top_headlines = newsapi.get_top_headlines(
-                                                language='en',
-                                                country='us')
+            language='en',
+            country='us')
     except:
         message_history.append({
             'role': 'user',
@@ -154,7 +160,7 @@ def add_in_news_data(message_history, transcription):
         })
         return message_history
 
-    top_articles_str = "" 
+    top_articles_str = ""
     for article in top_headlines['articles'][:3]:
         top_articles_str += article['title'] + "\n"
 
@@ -189,9 +195,10 @@ def generate_image_response(message_history, transcription):
             'role': 'assistant',
             'content': response,
         })
+        os.system(f"espeak '{response}'")
 
         return response, message_history
-    
+
     elif config["VISION_MODEL"] == 'detr':
         caption = generate_bounding_box_caption(model, processor)
 
