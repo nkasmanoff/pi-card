@@ -7,7 +7,8 @@ import time
 from assistanttools.actions import get_llm_response, message_history, preload_model
 from assistanttools.utils import check_if_ignore
 from config import config
-
+import json
+import uuid
 preload_model(config["LOCAL_MODEL"])
 
 
@@ -16,6 +17,8 @@ def transcribe_audio(file_path):
                            model_path=config["WHISPER_MODEL_PATH"],
                            file_path=file_path)
 
+
+conversation_id = str(uuid.uuid4())
 
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BCM)
@@ -67,10 +70,14 @@ while True:
         transcription = transcribe_audio(
             file_path="/home/nkasmanoff/Desktop/pi-card/sounds/audio.wav")
         if check_if_ignore(transcription):
-            print("insufficient audio")
+            print("* insufficient audio")
             continue
 
         _, message_history = get_llm_response(
             transcription,
             message_history,
             model_name=config["LOCAL_MODEL"], GPIO=GPIO)
+        # save appended message history to json
+        if config["STORE_CONVERSATIONS"]:
+            with open(f"storage/{conversation_id}.json", "w") as f:
+                json.dump(message_history, f, indent=4)

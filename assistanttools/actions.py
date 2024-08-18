@@ -66,9 +66,14 @@ def get_llm_response(transcription, message_history, model_name='llama3:instruct
         })
 
     if config['CONDENSE_MESSAGES'] and len(message_history) > config['TRAILING_MESSAGE_COUNT'] + 1:
-        # remove all but the first and last n messages
-        msg_history = message_history[:1] + \
-            message_history[-config['TRAILING_MESSAGE_COUNT']:]
+        if config['SYSTEM_PROMPT']:
+            # remove all but the first and last n messages
+
+            msg_history = message_history[:1] + \
+                message_history[-config['TRAILING_MESSAGE_COUNT']:]
+        else:
+            # remove all but the last n messages
+            msg_history = message_history[-config['TRAILING_MESSAGE_COUNT']:]
 
     else:
         msg_history = message_history
