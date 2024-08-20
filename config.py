@@ -17,6 +17,5 @@ config = {
     "CONDENSE_MESSAGES": True,  # for faster response time
     # number of messages to keep in memory (odd #s work best)
     "TRAILING_MESSAGE_COUNT": 3,
-    # Please keep answers to no more than a sentence."
     "SYSTEM_PROMPT": "You are Pi-Card, the Raspberry Pi voice assistant."
 }
