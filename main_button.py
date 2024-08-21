@@ -29,7 +29,7 @@ GPIO.setup(2, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 def record_audio(GPIO):
     CHUNK = 1024
     FORMAT = pyaudio.paInt16
-    CHANNELS = 2
+    CHANNELS = 1
     RATE = 16000
     MAX_RECORD_SECONDS = 15
     WAVE_OUTPUT_FILENAME = "sounds/audio.wav"
