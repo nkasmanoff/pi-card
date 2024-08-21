@@ -16,7 +16,8 @@ def transcribe_gguf(whisper_cpp_path, model_path, file_path):
     output = re.sub(' +', ' ', output)
     output = output.replace('\n', ' ')
     output = output.strip()
-
+    if output.startswith("Using host libthread_db library"):
+        output = ""
     return output
 
 
