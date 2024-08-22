@@ -14,7 +14,7 @@ load_dotenv()
 
 if config['SYSTEM_PROMPT']:
     message_history = [{
-        'role': 'user',
+        'role': 'system',
         'content': config['SYSTEM_PROMPT'],
     }]
 else:
