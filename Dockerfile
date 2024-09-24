@@ -1,8 +1,7 @@
 # Use an official Python runtime as a parent image
 FROM debian:latest
 
-RUN apt-get update && apt-get install -y \
-alsa-base alsa-utils
+RUN apt-get update && apt-get install -y alsa-utils
 RUN aplay -l
 RUN arecord -l
 
