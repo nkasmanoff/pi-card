@@ -12,3 +12,4 @@ matplotlib==3.8.4
 timm==0.9.16
 faster-whisper==1.0.2
 newsapi-python==0.2.7
+streamlit==1.38.0
