@@ -1,0 +1,7 @@
+services:
+  pi-card:
+    build: .
+    devices:
+      - "/dev/snd:/dev/snd"
+    volumes:
+      - .:/app

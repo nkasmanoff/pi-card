@@ -17,6 +17,8 @@ images/
 
 storage
 
+myenv
+.vscode
 .cache
 
 **wandb

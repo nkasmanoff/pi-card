@@ -1,5 +1,5 @@
 config = {
-    "SOUNDS_PATH": '/home/nkasmanoff/Desktop/pi-card/sounds/',
+    "SOUNDS_PATH": 'sounds/',
     "WAKE_WORD": ["rasp", "berry", "barry", "razbear", "brad", "raster"],
     "TIMEOUT": 10,
     # longest amount of time the allow a phrase to continue before stopping the recording
