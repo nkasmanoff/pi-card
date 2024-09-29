@@ -123,7 +123,8 @@ class ActionEngine:
                     continue
 
                 if check_if_exit(transcription):
-                    os.system(f"espeak 'Program stopped. See you later!'")
+                    os.system(
+                        f"espeak 'Program stopped. See you later!'")
                     # set message history to empty
                     self.message_history = [self.message_history[0]]
                     return
@@ -143,7 +144,7 @@ class ActionEngine:
 
 
 if __name__ == "__main__":
-    preload_model(config["LOCAL_MODEL"])
+    preload_model()
     action_engine = ActionEngine(sounds_path=config["SOUNDS_PATH"],
                                  whisper_cpp_path=config["WHISPER_CPP_PATH"],
                                  whisper_model_path=config["WHISPER_MODEL_PATH"],

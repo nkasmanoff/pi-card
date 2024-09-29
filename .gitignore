@@ -19,3 +19,8 @@ storage
 
 myenv
 .vscode
+.cache
+
+**wandb
+
+**.ipynb

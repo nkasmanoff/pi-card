@@ -1,50 +1,67 @@
 import ollama
 import os
 import requests
+from newsapi import NewsApiClient
 from bs4 import BeautifulSoup
 from dotenv import load_dotenv
 from config import config
 from .generate_detr import generate_bounding_box_caption, model, processor
 from .generate_gguf import generate_gguf_stream
 from .utils import check_if_vision_mode, dictate_ollama_stream, remove_parentheses
+from .bert import load_model, predict_tool
+from .play_spotify import play_spotify
 load_dotenv()
 
-message_history = [{
-    'role': 'user',
-    'content': config['SYSTEM_PROMPT'],
-}]
+if config['SYSTEM_PROMPT']:
+    message_history = [{
+        'role': 'system',
+        'content': config['SYSTEM_PROMPT'],
+    }]
+else:
+    message_history = []
 
 sentence_stoppers = ['. ', '.\n', '? ', '! ', '?\n', '!\n', '.\n']
 
 
-def preload_model(model_name="llama3:instruct"):
-    print("Preparing model...")
+model, tokenizer = load_model()
+
+
+def preload_model():
+    print("Preparing models...")
     os.system(
-        f"curl http://localhost:11434/api/chat -d '{{\"model\": \"{model_name}\"}}'")
+        f"""curl http://localhost:11434/api/generate -d '{{\"model\": \"{config['LOCAL_MODEL']}\" , \"keep_alive\": \"15m\"}}'""")
+
+    os.system(
+        f"""curl http://localhost:11434/api/generate -d '{{\"model\": \"{config['RAG_MODEL']}\" , \"keep_alive\": \"15m\"}}'""")
 
     print("Model preloaded.")
     return
 
 
-def get_llm_response(transcription, message_history, model_name='llama3:instruct', use_rag=True):
+def get_llm_response(transcription, message_history, model_name='llama3:instruct', use_rag=True, GPIO=None):
     print("Here's what you said: ", transcription)
     transcription = remove_parentheses(transcription)
+    use_rag_model = False
     if use_rag:
+        predicted_tool = predict_tool(transcription, model, tokenizer)
         # Experimental idea for supplmenting with external data. Tool use may be better but this could start.
-        if 'weather' in transcription:
-            os.system(f"espeak 'Getting weather data.'")
+        if predicted_tool == 'check_weather':
+
             message_history = add_in_weather_data(
                 message_history, transcription)
-        elif check_if_vision_mode(transcription):
-            os.system(f"espeak 'Getting image data.'")
+            use_rag_model = True
+        elif predicted_tool == 'take_picture':
             response, message_history = generate_image_response(
                 message_history, transcription)
             return response, message_history
-        elif "news" in transcription:
-            os.system(f"espeak 'Getting news data.'")
+        elif predicted_tool == 'check_news':
             message_history = add_in_news_data(message_history, transcription)
-
-        else:
+            use_rag_model = True
+        elif predicted_tool == 'play_spotify':
+            response, message_history = play_spotify(
+                transcription, message_history)
+            return response, message_history
+        elif predicted_tool == 'no_tool_needed':
             message_history.append({
                 'role': 'user',
                 'content': transcription,
@@ -63,10 +80,10 @@ def get_llm_response(transcription, message_history, model_name='llama3:instruct
     else:
         msg_history = message_history
 
-    stream = ollama.chat(model=model_name,
+    stream = ollama.chat(model=model_name if not use_rag_model else config["RAG_MODEL"],
                          stream=True, messages=msg_history)
 
-    response = dictate_ollama_stream(stream)
+    response = dictate_ollama_stream(stream, GPIO=GPIO)
 
     message_history.append({
         'role': 'assistant',
@@ -85,8 +102,24 @@ def add_in_weather_data(message_history, transcription):
     headers = {"accept": "application/json"}
 
     rt_url = f"https://api.tomorrow.io/v4/weather/realtime?location=new%20york&apikey={api_key}"
-    rt_response = requests.get(rt_url, headers=headers)
-    data = rt_response.json()['data']
+    try:
+        rt_response = requests.get(rt_url, headers=headers)
+        data = rt_response.json()['data']
+
+    except:
+        message_history.append({
+            'role': 'user',
+            'content': f"""
+            Context:
+            Unable to connect to weather service. 
+
+            Question:
+            {transcription}
+            """,
+        })
+
+        return message_history
+
     temp = data['values']['temperature']
     humidity = data['values']['humidity']
     precipitation = data['values']['precipitationProbability']
@@ -115,28 +148,35 @@ def add_in_weather_data(message_history, transcription):
 
 def add_in_news_data(message_history, transcription):
 
-    url = "https://news.ycombinator.com/"
+    try:
+        newsapi = NewsApiClient(api_key=os.getenv("NEWS_API_KEY"))
+        top_headlines = newsapi.get_top_headlines(
+            language='en',
+            country='us')
+    except:
+        message_history.append({
+            'role': 'user',
+            'content': f"Can you tell me to check if the news tool is working?",
+        })
+        return message_history
 
-    response = requests.get(url)
-    soup = BeautifulSoup(response.text, 'html.parser')
+    top_articles_str = ""
+    for article in top_headlines['articles'][:3]:
+        top_articles_str += article['title'] + "\n"
 
-    news = soup.find_all('tr', class_='athing')
-    top_articles = ""
-    for n in news[:1]:
-        top_articles += n.text + "\n"
+    top_articles_str = top_articles_str[:-1]
+
+    prompt = f"""Here are some top news headlines as of today:
+
+    {top_articles_str}
+
+    Please answer the question below: 
+    {transcription}
+    """
 
     message_history.append({
         'role': 'user',
-        'content': f"""Here are the top articles on HackerNews:
-
-        {top_articles}
-
-
-        Question:
-        {transcription}
-
-        Answer:
-        """,
+        'content': f"""{prompt}""",
     })
     return message_history
 
@@ -145,7 +185,21 @@ def generate_image_response(message_history, transcription):
     """
     Generate an image response.
     """
-    if config["VISION_MODEL"] == 'detr':
+    if config['VISION_MODEL'] == 'none':
+        response = "Camera is disabled. Please enable it if you want to use this feature."
+        message_history.append({
+            'role': 'user',
+            'content': transcription,
+        })
+        message_history.append({
+            'role': 'assistant',
+            'content': response,
+        })
+        os.system(f"espeak '{response}'")
+
+        return response, message_history
+
+    elif config["VISION_MODEL"] == 'detr':
         caption = generate_bounding_box_caption(model, processor)
 
         message_history.append({
