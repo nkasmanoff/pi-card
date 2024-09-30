@@ -1,5 +1,5 @@
 config = {
-    "SOUNDS_PATH": '/home/nkasmanoff/Desktop/pi-card/sounds/',
+    "SOUNDS_PATH": "/home/nkasmanoff/Desktop/pi-card/sounds/",
     "WAKE_WORD": ["rasp", "berry", "barry", "razbear", "brad", "raster"],
     "TIMEOUT": 10,
     # longest amount of time the allow a phrase to continue before stopping the recording
@@ -17,5 +17,5 @@ config = {
     "CONDENSE_MESSAGES": True,  # for faster response time
     # number of messages to keep in memory (odd #s work best)
     "TRAILING_MESSAGE_COUNT": 3,
-    "SYSTEM_PROMPT": "You are Pi-Card, the Raspberry Pi AI assistant."
+    "SYSTEM_PROMPT": "You are Pi-Card, the Raspberry Pi AI assistant.",
 }
