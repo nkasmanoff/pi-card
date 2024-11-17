@@ -109,7 +109,7 @@ Feel free to use your own, this is what worked for me!
 
 ## Roadmap
 
-Coming soon, but I plan to add notes here on things currently implemented, and what can be done in the future. Some quick notes on it are below
+Coming soon, but I plan to add notes here on things currently implemented, and what can be done in the future. Some quick notes on it are below. I've started to make a notion board to keep track of things, but it's not complete yet. Check it out [here](https://marble-laugh-dd5.notion.site/14195743cced80229c3cddfd0cd5a750?v=a673ae0424b445d9983b71774a943b0f).
 
 -   [x] Basic conversation capabilities
 -   [ ] Camera capabilities
@@ -121,6 +121,7 @@ Coming soon, but I plan to add notes here on things currently implemented, and w
 -   [ ] Improved tutorials & videos
 -   [ ] Improve external service function model (tool-bert)
 -   [x] Test when connected to a portable power source
+-   [ ] Create optional model generation using entropix
 -   [ ] Dockerize repo for testing on more devices
 -   [ ] Test in other languages
 -   [ ] Add more external services
