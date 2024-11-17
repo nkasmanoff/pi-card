@@ -5,20 +5,19 @@
 
 ## Table of Contents
 
--   [Demos](#demos)
 -   [Introduction](#introduction)
 -   [Usage](#usage)
 -   [Hardware](#hardware)
 -   [Setup](#setup)
 -   [Roadmap](#roadmap)
 
-## Demos
+**Note**: This project is still under development, and camera functionality is not yet fully implemented.
 
-(Some better videos coming soon)
+Due to llama cpp no longer supporting vision models, the camera functionality has been temporarily removed.
 
 ## Introduction
 
-Pi-Card is an AI powered assistant running entirely on a Raspberry Pi. It is capable of doing anything a standard LLM (like ChatGPT) can do in a conversational setting.
+Pi-Card is an AI powered assistant running entirely on a Raspberry Pi. It is capable of doing what a standard LLM (like ChatGPT) can do in a conversational setting.
 In addition, if there is a camera equipped, you can also ask Pi-card to take a photo, describe what it sees, and then ask questions about that image.
 
 ### Why Pi-card?
@@ -31,17 +30,17 @@ Please submit an issue or pull request if you can think of a better way to force
 
 ### How does it work?
 
-Pi-Card runs entirely on your Raspberry Pi.
+Pi-Card runs on your Raspberry Pi.
 
-**With a wake word**. Once the `main.py`, the system will listen for your wake word. Once your wake word has been said, you are officially in a conversation. Within this conversation you do not need to constantly repeat the wake word. The system will continue to listen for your commands until you say something like "stop", "exit", or "goodbye".
+**With a wake word**. Once the `main.py`, the system will listen for your wake word. Once your wake word has been said, you are officially in a conversation. Within this conversation you do not need to constantly repeat the wake word. The system will continue to listen for your commands until you say something like "stop", "exit", or "goodbye". More information on this / customization can be found in the `config.py` file.
 
-**With a button**. If you can get your hands on a breadboard, some wires, and a button, using a button to to handle the conversation is a much smoother (in my experience) way to interact. This is done by pressing the button, and then speaking your command. The button is a simple GPIO button, and can be set up by following the instructions in the `main_button.py` file.
+**With a button**. If you can get your hands on a breadboard, some wires, and a button, using a button to to handle the conversation is a much smoother (in my opinion) way to interact. This is done by pressing the button, and then speaking your command. The button is a simple GPIO button, and can be set up by following the instructions in the `main_button.py` file.
 
 The chatbot has a configurable memory of the conversation, meaning if you want the assistant to repeat something it said, or elaborate on a previous topic, you can do so. For quicker responses, you can set the memory to a smaller number in the `config.py` file.
 
 ### How useful is it?
 
-The system is designed to be a fun project that can be a _somewhat_ helpful AI assistant. Since everything is done locally, the system will not be as capable, or as fast, as cloud based systems. However, the system is still capable of a lot of improvements to be made.
+The system is designed to be a fun project that can be a _somewhat_ helpful AI assistant. Since everything is done locally, it will not be as capable, or as fast, as cloud based systems. However, in the past year significant strides have already been made in small LLM models, and it's likely that this will only continue to improve, meaning so too will this project!
 
 ### Why isn't this an app?
 
@@ -61,27 +60,17 @@ or
 python main_button.py
 ```
 
-Once the program is running, you can start a conversation with the assistant by saying the wake word. The default wake word is "hey assistant", but you can change this in the `config.py` file. If the button version is in place, you can press the button to start a conversation, or interrupt the assistant at any time.
+Once the program is running, you can start a conversation with the assistant by saying the wake word. The default wake words are "raspberry", "barry", "razbear" (aka things that the transcription might have accidentally picked up), but you can change this in the `config.py` file. If the button version is in place, you can press the button to start a conversation, or interrupt the assistant at any time.
 
 ## Setup
 
 ### Software
 
-To keep this system as fast and lean as possible, we use cpp implementations of the audio transcription and vision language models. These are done with the wonderful libraries [whisper.cpp](https://github.com/ggerganov/whisper.cpp) for the audio transcription and [llama.cpp](https://github.com/ggerganov/llama.cpp) for the vision language model.
+To keep this system as fast and lean as possible, we use cpp implementations of the audio transcription. This is done with the wonderful library [whisper.cpp](https://github.com/ggerganov/whisper.cpp).
 
-In both cases, please clone these repositories wherever you like, and add their paths to the `config.py` file.
+Please clone the repository wherever you like, and add its path to the `config.py` file.
 
-Once cloned, please go to each repository, and follow the setup instructions to get the models running. Some pointers are given below:
-
-For llama.cpp, we are using the vision language model capabilities, which are slightly different from the standard setup. You will need to follow the setup instructions for [LlaVA](https://github.com/ggerganov/llama.cpp/blob/master/examples/llava/README.md), but update the model to be used to be one better suited for this device, [Moondream2](https://moondream.ai)
-
-To install Moondream, you'll need to go to HuggingFace model hub, and download the model. I did so using python, with the following commands. Once again, make sure the vision model path is added to the `config.py` file.
-
-```python
-from huggingface_hub import snapshot_download
-model_id="vikhyatk/moondream2"
-snapshot_download(repo_id=model_id, local_dir=your/local/path, local_dir_use_symlinks=False, revision="main")
-```
+Once cloned, please follow the setup instructions to get the models running. Some pointers are given below:
 
 #### Tools
 
@@ -95,7 +84,7 @@ Since this project is depending on openly available models, depending on the one
 
 ### Hardware
 
-The hardware setup is quite simple. You will need a Raspberry Pi 5 Model B, a USB microphone, a speaker, and a camera.
+The hardware setup is quite simple. You will need a Raspberry Pi 5 Model B, a USB microphone, and a speaker.
 
 The USB microphone and speaker can be plugged into the Raspberry Pi's USB ports. The camera can be connected to the camera port on the Raspberry Pi.
 
@@ -112,67 +101,26 @@ I used the following hardware for my setup:
 Please note Pi 5's have a new camera port, hence the new camera connector. At the same time, while this project is focused on making this work on a Raspberry Pi 5, it should
 work on other devices as well.
 
+The camera connector is optional, but if you want to use the camera functionality, you will need to purchase one.
+
 For setting up the GPIO button, I found the first couple minutes of [this tutorial](https://youtu.be/IHvtJvgM_eQ?si=VZzhElu5yYTt7zcV) great.
 
 Feel free to use your own, this is what worked for me!
-
-## Benchmarks
-
-This table is a VERY approximate benchmark of the response times of various models.
-
-### Transcription Models
-
-| Model             | Load Time | Total Time |
-| ----------------- | --------- | ---------- |
-| Whisper Tiny (en) | 0.113s    | 1.76s      |
-| Whisper Base (en) | 0.159s    | 3.36s      |
-
-### Large Language Models
-
-Since this one varies based on how large the conversation / response is, just putting the approximate tokens per second metrics here.
-
-| Model                                                                                | Prompt     | Eval      | ~ Time to Respond |
-| ------------------------------------------------------------------------------------ | ---------- | --------- | ----------------- |
-| [Phi 3 Instruct](https://ollama.com/library/phi3:instruct) (3B) (Q4_0)               | 4.65 tok/s | 3.8 tok/s | 3.5s              |
-| [Llama 3 Instruct](https://ollama.com/library/llama3.1:8b-instruct-q4_0) (8B) (Q4_0) | 2.37s      | 2.00s     | 5.0s              |
-| [Qwen2 Instruct](https://ollama.com/library/qwen2:1.5b-instruct) (1.5B) (Q4_0)       | -          | -         | 1.0s              |
-| [Picard](https://ollama.com/noahpunintended/picard) (0.5B) (fp16)                    | -          | -         | 0.9s              |
-
-(time to respond ~= prompt eval duration)
-
-### Vision Language Model
-
-| Model      | Load Image In Context Time | Start Generating Time |
-| ---------- | -------------------------- | --------------------- |
-| Moondream2 | 62s                        | 3.5s                  |
-
-Meaning that for vision language models, the biggest bottleneck is loading all of the "silent" image tokens in the llm memory. For moondream, this is 729 image tokens, so understandable it takes a bit of time.
-
-This is the May revision of Moondream2, I haven't used it much recently, but if this model is changed to use pooling layers, it's latency should drop significantly and it would be a huge improvement.
-
-## Overclocking
-
-Do this at your own risk!
-
-One way I have found to speed up all of the numbers above is by overclocking my Raspberry Pi. You can do so by following the instructions [here](https://www.tomshardware.com/how-to/overclock-raspberry-pi-5). I would NOT recommend going all the way up to 3.0 GHz, and it is possible your machine won't even let you do so. I have only managed to raise mine to 2.6 GHz, it has crashed once, but otherwise works, and speeds up all the benchmarks above in what I think is roughly proportional to the improved clock speed.
-
-I would recommend doing this if you are comfortable with the chance of burning out the device, extra power consumption. Make sure you have a good cooling system in place.
 
 ## Roadmap
 
 Coming soon, but I plan to add notes here on things currently implemented, and what can be done in the future. Some quick notes on it are below
 
 -   [x] Basic conversation capabilities
--   [x] Camera capabilities
+-   [ ] Camera capabilities
 -   [x] Benchmark response times
 -   [x] Test overclocking
 -   [x] Figure out how to speed up whisper times
--   [x] Add more external services
 -   [x] Add ability to interrupt assistant, and ask new question
--   [x] Use a custom tuned model
--   [ ] New YouTube videos
--   [ ] Use a moondream model with image token pooling
+-   [x] Use a custom tuned model for the assistant
+-   [ ] Improved tutorials & videos
 -   [ ] Improve external service function model (tool-bert)
--   [ ] Test when connected to a portable power source
--   [ ] Formal write-up of how I did fine-tuning and porting over (since I already forgot how)
+-   [x] Test when connected to a portable power source
 -   [ ] Dockerize repo for testing on more devices
+-   [ ] Test in other languages
+-   [ ] Add more external services
