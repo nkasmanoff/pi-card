@@ -130,7 +130,7 @@ class ActionEngine:
                     return
 
                 else:
-                    os.system(f"play -v .1 sounds/notification.wav")
+                    os.system(f"aplay -v .1 {self.sounds_path}notification.wav")
                     _, self.message_history = get_llm_response(
                         transcription, self.message_history, model_name=self.ollama_model)
 

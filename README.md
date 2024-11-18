@@ -176,3 +176,28 @@ Coming soon, but I plan to add notes here on things currently implemented, and w
 -   [ ] Test when connected to a portable power source
 -   [ ] Formal write-up of how I did fine-tuning and porting over (since I already forgot how)
 -   [ ] Dockerize repo for testing on more devices
+
+
+## Building the Docker Image
+
+To build the Docker image, navigate to the directory containing the Dockerfile and run the following command:
+
+```bash
+sudo docker build -t pi-card .
+```
+
+## Running the Docker Container (recommended)
+
+To run the Docker container via `docker compose`, run the following command:
+
+```bash
+sudo docker compose up
+```
+
+## Running the Docker Container (not recommended)
+
+To run the Docker container, run the following command:
+
+```bash
+sudo docker run -it --device /dev/snd pi-card
+```

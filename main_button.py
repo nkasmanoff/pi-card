@@ -14,9 +14,11 @@ preload_model()
 
 
 def transcribe_audio(file_path):
-    return transcribe_gguf(whisper_cpp_path=config["WHISPER_CPP_PATH"],
-                           model_path=config["WHISPER_MODEL_PATH"],
-                           file_path=file_path)
+    return transcribe_gguf(
+        whisper_cpp_path=config["WHISPER_CPP_PATH"],
+        model_path=config["WHISPER_MODEL_PATH"],
+        file_path=file_path,
+    )
 
 
 conversation_id = str(uuid.uuid4())
@@ -24,6 +26,9 @@ conversation_id = str(uuid.uuid4())
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(2, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+GPIO.setup(4, GPIO.OUT)
+
+# set up second gpio pin for led
 
 
 def record_audio(GPIO):
@@ -36,11 +41,9 @@ def record_audio(GPIO):
 
     p = pyaudio.PyAudio()
 
-    stream = p.open(format=FORMAT,
-                    channels=CHANNELS,
-                    rate=RATE,
-                    input=True,
-                    frames_per_buffer=CHUNK)
+    stream = p.open(
+        format=FORMAT, channels=CHANNELS, rate=RATE, input=True, frames_per_buffer=CHUNK
+    )
 
     print("* recording")
     # record while button is pressed
@@ -54,31 +57,35 @@ def record_audio(GPIO):
     stream.close()
     p.terminate()
 
-    wf = wave.open(WAVE_OUTPUT_FILENAME, 'wb')
+    wf = wave.open(WAVE_OUTPUT_FILENAME, "wb")
     wf.setnchannels(CHANNELS)
     wf.setsampwidth(p.get_sample_size(FORMAT))
     wf.setframerate(RATE)
-    wf.writeframes(b''.join(frames))
+    wf.writeframes(b"".join(frames))
     wf.close()
 
 
-os.system(
-    f"espeak 'Hello. How can I help you?'")
+os.system(f"espeak 'Hello. How can I help you?'")
 while True:
     if GPIO.input(2) == GPIO.LOW:
         print("Button was pushed!")
+        GPIO.output(4, GPIO.HIGH)
+
         record_audio(GPIO)
         transcription = transcribe_audio(
-            file_path="/home/nkasmanoff/Desktop/pi-card/sounds/audio.wav")
+            file_path=f"{config['SOUNDS_PATH']}audio.wav"
+        )
+        GPIO.output(4, GPIO.LOW)
+
         if check_if_ignore(transcription):
             print("* insufficient audio")
             continue
 
         _, message_history = get_llm_response(
-            transcription,
-            message_history,
-            model_name=config["LOCAL_MODEL"], GPIO=GPIO)
+            transcription, message_history, model_name=config["LOCAL_MODEL"], GPIO=GPIO
+        )
         # save appended message history to json
         if config["STORE_CONVERSATIONS"]:
             with open(f"storage/{conversation_id}.json", "w") as f:
                 json.dump(message_history, f, indent=4)
+    GPIO.output(4, GPIO.LOW)
