@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  picard:
+    build: .
+    privileged: true # Needed for GPIO access
+    devices:
+      - "/dev/snd:/dev/snd" # For audio access
+      - "/dev/gpiomem:/dev/gpiomem" # For GPIO access
+    volumes:
+      - .:/app
+      - /run/user/1000/pipewire-0:/tmp/pipewire-0
+
+    environment:
+      - USE_BUTTON=false
+      - DOCKERIZED=true
+      - TOMORROWIO_API_KEY=${TOMORROWIO_API_KEY}
+      - NEWS_API_KEY=${NEWS_API_KEY}
+      - SPOTIFY_CLIENT_ID=${SPOTIFY_CLIENT_ID}
+      - SPOTIFY_CLIENT_SECRET=${SPOTIFY_CLIENT_SECRET}
+      - WHISPER_CPP_PATH=/app/whisper.cpp
+      - OLLAMA_HOST=http://localhost:11434
+    restart: unless-stopped

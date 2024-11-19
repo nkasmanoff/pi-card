@@ -8,9 +8,16 @@ import uuid
 from assistanttools.utils import check_if_exit, check_if_ignore
 from config import config
 
+print(os.getenv('DOCKERIZED', False))
+if os.getenv('DOCKERIZED', False):
+    from config import docker_config as config
+
+# change repo to one above
+print("CURRENT DIRECTORY: ", os.getcwd())
+print("CURRENT FOLDER CONTENT: ", os.listdir())
 if config['USE_FASTER_WHISPER']:
     from faster_whisper import WhisperModel
-    model = WhisperModel("base.en")
+    model = WhisperModel("tiny.en")
 
     def transcribe_audio(file_path):
         segments, _ = model.transcribe(file_path)
@@ -26,6 +33,8 @@ else:
         return transcribe_gguf(whisper_cpp_path=config["WHISPER_CPP_PATH"],
                                model_path=config["WHISPER_MODEL_PATH"],
                                file_path=file_path)
+
+
 
 
 class WakeWordListener:
@@ -70,6 +79,7 @@ class WakeWordListener:
                 transcription = transcribe_audio(
                     file_path=f"{self.sounds_path}audio.wav")
 
+                print("TRANSCRIPTION: ", transcription)
                 if any(x in transcription.lower() for x in self.wake_word):
                     os.system(f"espeak 'Yes?'")
                     self.action_engine.run_second_listener(timeout=self.timeout,
@@ -130,7 +140,7 @@ class ActionEngine:
                     return
 
                 else:
-                    os.system(f"play -v .1 sounds/notification.wav")
+                    os.system(f"aplay sounds/notification.wav")
                     _, self.message_history = get_llm_response(
                         transcription, self.message_history, model_name=self.ollama_model)
 

@@ -10,6 +10,9 @@ from config import config
 import json
 import uuid
 
+if os.getenv('DOCKERIZED', False):
+    from config import docker_config as config
+
 preload_model()
 
 
