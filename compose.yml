@@ -5,3 +5,5 @@ services:
       - "/dev/snd:/dev/snd"
     volumes:
       - .:/app
+    command: [ "./start.sh" ]
+    tty: true

@@ -2,17 +2,8 @@
 FROM debian:latest
 
 # Install ALSA and audio packages first
-RUN apt-get update && apt-get install -y \
-    alsa-utils \
-    libasound2 \
-    libasound2-plugins
-
-# Copy ALSA config
-COPY asound.conf /etc/asound.conf
-
-# Test ALSA
-RUN aplay -l
-RUN arecord -l
+RUN apt update && apt upgrade -y && \
+    apt install -y wget gcc swig libmariadb-dev pipewire-alsa pipewire libasound2-dev alsa-utils
 
 # Set the working directory in the container to /app
 WORKDIR /app
@@ -33,6 +24,9 @@ RUN apt-get update && apt-get install -y \
     python3 \
     python3-pip \
     python3-venv
+
+# Test espeak
+RUN espeak "Testing espeak."
 
 # Create a virtual environment and activate it
 RUN python3 -m venv /app/venv
