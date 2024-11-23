@@ -8,13 +8,10 @@ import uuid
 from assistanttools.utils import check_if_exit, check_if_ignore
 from config import config
 
-print(os.getenv('DOCKERIZED', False))
 if os.getenv('DOCKERIZED', False):
     from config import docker_config as config
 
 # change repo to one above
-print("CURRENT DIRECTORY: ", os.getcwd())
-print("CURRENT FOLDER CONTENT: ", os.listdir())
 if config['USE_FASTER_WHISPER']:
     from faster_whisper import WhisperModel
     model = WhisperModel("tiny.en")

@@ -3,8 +3,9 @@ set -e
 
 
 ollama serve &
-# download model
-#ollama pull gemma2:2b-instruct-q4_0
+# download model if not already downloaded
+ollama pull gemma2:2b-instruct-q4_0
+
 # Check if running in button mode
 if [ "$USE_BUTTON" = "true" ]; then
     echo "Starting in button mode..."

@@ -24,26 +24,27 @@ RUN apt-get update && apt-get install -y \
     gcc \
     swig \
     libmariadb-dev \
-    libasound2-dev \    
+    libasound2-dev \
+    pulseaudio \
+    pulseaudio-utils \
     && rm -rf /var/lib/apt/lists/*
 
-# Set audio environment variables
-ENV AUDIODEV=null
+# Set audio environment variables for USB Audio (card 2)
+# Note these are hardcoded for the USB Audio device and where you plug it in (check aplay -l)
+ENV AUDIODEV=plughw:2,0  
 ENV AUDIODRIVER=alsa
-ENV PA_ALSA_PLUGHW=1
-ENV PULSE_SERVER=/dev/null
-ENV ALSA_CARD=0
+ENV PULSE_SERVER=/run/user/1000/pulse/native
+ENV ALSA_CARD=2  
 
-# Create ALSA configuration
+# Create ALSA configuration for USB Audio
 RUN echo 'pcm.!default { \n\
-    type null \n\
-    rate 22050 \n\
-    channels 1 \n\
-    format S16_LE \n\
+    type plug \n\
+    slave.pcm "hw:2,0" \n\
     }\n\
     \n\
     ctl.!default { \n\
-    type null \n\
+    type hw \n\
+    card 2 \n\
     }' > /etc/asound.conf
 
 # Configure espeak-specific environment
@@ -66,11 +67,11 @@ COPY requirements.txt .
 RUN pip install --upgrade pip
 # Install Python dependencies in the virtual environment
 RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install RPi.GPIO
 
 
 
 # Create necessary directories
-RUN mkdir -p sounds storage images
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1

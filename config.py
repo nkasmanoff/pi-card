@@ -1,6 +1,5 @@
 base_config = {
-    "SOUNDS_PATH": 'sounds/',
-    "WAKE_WORD": ["rasp", "berry", "barry", "razbear", "brad", "raster"],
+    "WAKE_WORD": ["rasp", "berry", "barry", "razbear", "brad", "raster", "right there"],
     "TIMEOUT": 10,
     # longest amount of time the allow a phrase to continue before stopping the recording
     "PHRASE_TIME_LIMIT": 7,
@@ -17,8 +16,7 @@ base_config = {
 }
 
 config = {
-    "SOUNDS_PATH": 'sounds/',
-    # longest amount of time the allow a phrase to continue before stopping the recording
+    "SOUNDS_PATH": '/home/nkasmanoff/Desktop/pi-card/sounds/',
     "WHISPER_CPP_PATH": "../whisper.cpp/",
     "WHISPER_MODEL_PATH": "/home/nkasmanoff/Desktop/whisper.cpp/models/ggml-tiny.en.bin",
     "LLAMA_CPP_PATH": "../md-gguf/llama.cpp/",

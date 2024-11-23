@@ -7,9 +7,16 @@ services:
     devices:
       - "/dev/snd:/dev/snd" # For audio access
       - "/dev/gpiomem:/dev/gpiomem" # For GPIO access
+      - "/dev/mem:/dev/mem"
     volumes:
       - .:/app
       - /run/user/1000/pipewire-0:/tmp/pipewire-0
+      - "/sys/class/gpio:/sys/class/gpio"
+      - "/dev/gpiomem:/dev/gpiomem"
+    group_add:
+      - audio
+    cap_add:
+      - SYS_RAWIO
 
     environment:
       - USE_BUTTON=false
