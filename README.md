@@ -64,6 +64,17 @@ Once the program is running, you can start a conversation with the assistant by 
 
 ## Setup
 
+### Docker (recommended)
+
+To run the project in a docker container, you can use the following command:
+
+```bash
+sudo docker-compose build
+sudo docker-compose up
+```
+
+Some notes. This is a recent addition, so may not work perfectly. I have it working well in the non-button version, not sure how to get GPIO access passed to the container.
+
 ### Software
 
 To keep this system as fast and lean as possible, we use cpp implementations of the audio transcription. This is done with the wonderful library [whisper.cpp](https://github.com/ggerganov/whisper.cpp).
@@ -122,6 +133,6 @@ Coming soon, but I plan to add notes here on things currently implemented, and w
 -   [ ] Improve external service function model (tool-bert)
 -   [x] Test when connected to a portable power source
 -   [ ] Create optional model generation using entropix
--   [ ] Dockerize repo for testing on more devices
+-   [x] Dockerize repo for testing on more devices
 -   [ ] Test in other languages
 -   [ ] Add more external services
