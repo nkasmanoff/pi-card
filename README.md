@@ -11,9 +11,11 @@
 -   [Setup](#setup)
 -   [Roadmap](#roadmap)
 
-**Note**: This project is still under development, and camera functionality is not yet fully implemented.
+**Note**: This project is constantly under development. If there are any issues, feel free to submit an issue or pull request and I can try to help!
 
-Due to llama cpp no longer supporting vision models, the camera functionality has been temporarily removed.
+Otherwise, feel free to fork/clone/copy the repo and make your own changes! I hope with the newly added docker support it will be easier to set this up, and figure out ways to modify from there. I promise a video introduction is coming soon.
+
+One other thing to note is that due to llama cpp no longer actively supporting vision models, the camera functionality has been temporarily removed.
 
 ## Introduction
 
