@@ -6,7 +6,7 @@ import soundfile as sf
 
 
 def transcribe_gguf(whisper_cpp_path, model_path, file_path):
-    command = f"./{whisper_cpp_path}main -m {model_path} -f {file_path}"
+    command = f".{whisper_cpp_path}main -m {model_path} -f {file_path}"
     print("Command: ", command)
     process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)
     process.wait()

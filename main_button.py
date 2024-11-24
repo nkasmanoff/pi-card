@@ -1,5 +1,6 @@
 from assistanttools.transcribe_gguf import transcribe_gguf
 import os
+os.system("pip install RPi.GPIO")
 import RPi.GPIO as GPIO
 import pyaudio
 import wave
@@ -9,6 +10,9 @@ from assistanttools.utils import check_if_ignore
 from config import config
 import json
 import uuid
+
+if os.getenv('DOCKERIZED', False):
+    from config import docker_config as config
 
 preload_model()
 

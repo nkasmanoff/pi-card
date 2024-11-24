@@ -11,9 +11,11 @@
 -   [Setup](#setup)
 -   [Roadmap](#roadmap)
 
-**Note**: This project is still under development, and camera functionality is not yet fully implemented.
+**Note**: This project is constantly under development. If there are any issues, feel free to submit an issue or pull request and I can try to help!
 
-Due to llama cpp no longer supporting vision models, the camera functionality has been temporarily removed.
+Otherwise, feel free to fork/clone/copy the repo and make your own changes! I hope with the newly added docker support it will be easier to set this up, and figure out ways to modify from there. I promise a video introduction is coming soon.
+
+One other thing to note is that due to llama cpp no longer actively supporting vision models, the camera functionality has been temporarily removed.
 
 ## Introduction
 
@@ -63,6 +65,17 @@ python main_button.py
 Once the program is running, you can start a conversation with the assistant by saying the wake word. The default wake words are "raspberry", "barry", "razbear" (aka things that the transcription might have accidentally picked up), but you can change this in the `config.py` file. If the button version is in place, you can press the button to start a conversation, or interrupt the assistant at any time.
 
 ## Setup
+
+### Docker (recommended)
+
+To run the project in a docker container, you can use the following command:
+
+```bash
+sudo docker-compose build
+sudo docker-compose up
+```
+
+Some notes. This is a recent addition, so may not work perfectly. I have it working well in the non-button version, not sure how to get GPIO access passed to the container.
 
 ### Software
 
@@ -122,6 +135,6 @@ Coming soon, but I plan to add notes here on things currently implemented, and w
 -   [ ] Improve external service function model (tool-bert)
 -   [x] Test when connected to a portable power source
 -   [ ] Create optional model generation using entropix
--   [ ] Dockerize repo for testing on more devices
+-   [x] Dockerize repo for testing on more devices
 -   [ ] Test in other languages
 -   [ ] Add more external services
