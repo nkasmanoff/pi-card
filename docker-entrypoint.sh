@@ -3,8 +3,8 @@ set -e
 
 
 ollama serve &
-# download model if not already downloaded
-ollama pull gemma2:2b-instruct-q4_0
+# download model if not already downloaded (this is done in docker-compose.yml)
+ollama pull $OLLAMA_MODEL
 
 # Check if running in button mode
 if [ "$USE_BUTTON" = "true" ]; then

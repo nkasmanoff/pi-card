@@ -11,12 +11,11 @@ base_config = {
     "CONDENSE_MESSAGES": True,  # for faster response time
     # number of messages to keep in memory (odd #s work best)
     "TRAILING_MESSAGE_COUNT": 3,
-    "SYSTEM_PROMPT": "You are Pi-Card, the Raspberry Pi AI assistant."
-
+    "SYSTEM_PROMPT": "You are Pi-Card, the Raspberry Pi AI assistant.",
 }
 
 config = {
-    "SOUNDS_PATH": '/home/nkasmanoff/Desktop/pi-card/sounds/',
+    "SOUNDS_PATH": "/home/nkasmanoff/Desktop/pi-card/sounds/",
     "WHISPER_CPP_PATH": "../whisper.cpp/",
     "WHISPER_MODEL_PATH": "/home/nkasmanoff/Desktop/whisper.cpp/models/ggml-tiny.en.bin",
     "LLAMA_CPP_PATH": "../md-gguf/llama.cpp/",
@@ -24,13 +23,18 @@ config = {
     "MOONDREAM_MODEL_PATH": "../moondream-quants/moondream2-050824-q8.gguf",
 }
 
+import os
+
 docker_config = {
-    "SOUNDS_PATH": '/app/sounds/',
-    "WHISPER_CPP_PATH": '/app/whisper.cpp/',
-    "WHISPER_MODEL_PATH": '/app/whisper.cpp/models/ggml-tiny.en.bin',
-    "LLAMA_CPP_PATH": '/app/md-gguf/llama.cpp/',
-    "MOONDREAM_MMPROJ_PATH": '/app/moondream-quants/moondream2-mmproj-050824-f16.gguf',
-    "MOONDREAM_MODEL_PATH": '/app/moondream-quants/moondream2-050824-q8.gguf',
+    "SOUNDS_PATH": "/app/sounds/",
+    "WHISPER_CPP_PATH": "/app/whisper.cpp/",
+    "WHISPER_MODEL_PATH": "/app/whisper.cpp/models/ggml-tiny.en.bin",
+    "LLAMA_CPP_PATH": "/app/md-gguf/llama.cpp/",
+    "MOONDREAM_MMPROJ_PATH": "/app/moondream-quants/moondream2-mmproj-050824-f16.gguf",
+    "MOONDREAM_MODEL_PATH": "/app/moondream-quants/moondream2-050824-q8.gguf",
+    # update the model names from docker-compose.yml
+    "LOCAL_MODEL": os.getenv("OLLAMA_MODEL"),
+    "RAG_MODEL": os.getenv("OLLAMA_MODEL"),
 }
 
 config.update(base_config)
