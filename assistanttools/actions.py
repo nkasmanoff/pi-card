@@ -219,29 +219,36 @@ def generate_image_response(message_history, transcription):
 
         response = dictate_ollama_stream(stream)
 
-    elif config["VISION_MODEL"] == 'moondream':
+    elif config["VISION_MODEL"] == 'vlm':
         os.system(f"espeak 'Taking a picture.'")
+        os.system("libcamera-still --width 180 --height 180 -o images/image.jpg")
 
-        os.system("libcamera-still -o images/image.jpg")
-        os.system(f"espeak 'Analyzing the image.'")
-
-        prompt = '"<image>\n\nQuestion: What do you see?\n\nAnswer: "'
-        response = ""
+        os.system(f"espeak 'Photo taken. Now analyzing.'")
+        vlm_output_start = "per image patch)"
+        prompt = '"Please describe the image in detail."'
         word = ""
-
-        for chunk in generate_gguf_stream(llama_cpp_path=config["LLAMA_CPP_PATH"],
-                                          model_path=config["MOONDREAM_MODEL_PATH"],
-                                          mmproj_path=config["MOONDREAM_MMPROJ_PATH"],
+        response = ""
+        is_ready_to_print = False
+        for line in generate_gguf_stream(llama_cpp_path=config["LLAMA_CPP_PATH"],
+                                          model_path=config["VLM_MODEL_PATH"],
+                                          mmproj_path=config["VLM_MMPROJ_PATH"],
                                           image_path="images/image.jpg",
                                           prompt=prompt,
                                           temp=0.):
-            word += chunk
-            if ' ' in chunk:
-                os.system(f"espeak '{word}'")
-                response += word
-                word = ""
-
+            response += line
+            if vlm_output_start in response:
+                # reset the word, and start printing
+                response = ""
+                is_ready_to_print = True
+                print("READY TO PRINT")
+            if is_ready_to_print:
+                if ' ' in line:
+                    os.system(f"espeak '{word}'")
+                    word = ""
+                else:
+                    word += line    
         os.system(f"espeak '{word}'")
+
 
     message_history.append({
         'role': 'user',

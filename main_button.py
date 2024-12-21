@@ -1,6 +1,5 @@
 from assistanttools.transcribe_gguf import transcribe_gguf
 import os
-os.system("pip install RPi.GPIO")
 import RPi.GPIO as GPIO
 import pyaudio
 import wave

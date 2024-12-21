@@ -115,8 +115,6 @@ class ActionEngine:
     def run_second_listener(self, timeout, duration):
         recognizer = sr.Recognizer()
         while True:
-            # play the listening sound to know when to start speaking
-            os.system(f"aplay sounds/listening.wav")
             with sr.Microphone() as source:
                 print("Awaiting query...")
                 try:
